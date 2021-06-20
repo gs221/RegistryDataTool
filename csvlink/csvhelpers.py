@@ -2,6 +2,7 @@ from future.builtins import next
 
 import os
 import re
+import glob
 import logging
 from io import StringIO, open
 import sys
@@ -189,7 +190,13 @@ class CSVCommand(object) :
         if selection == 'y':
             self.skip_training = True
         elif selection == 'n':
-            self.skip_training = False
+
+            if len(glob.glob(os.path.join('./data/training/', '*.*'))) > 0:
+                print('\n[ERROR] Training folder not empty. Please remove any training data from this folder, or select y(es) in previous option to run with exsting data.\n')
+                exit(0)
+            else:
+                self.skip_training = False
+
         else:
             print('[ERROR] Invalid selection. Re-run and enter either \'y\' or \'n\'')        
 
