@@ -6,7 +6,7 @@ def pre_clean(f):
 
   print('[INFO] Pre-Cleaning ', f.split('/')[-1], end='')
 
-  f_cleaned = ""
+  f_cleaned = ''
 
   with open(f, 'r', encoding='iso-8859-15') as file:
     f_cleaned = file.read().replace('"', '')

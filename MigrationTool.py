@@ -1,7 +1,5 @@
-import argparse
 import glob
 import os
-from sys import intern
 
 import pandas as pd
 from pandas import DataFrame
@@ -20,22 +18,39 @@ def main():
 def run_menu():
     print('------------- Registry UCAS-SCL Migration Tool -------------\n')
 
-    # Gets filenames and paths of UCAS and SCL documents
-    ucas_folder_contents = glob.glob(os.path.join('./Data/ucas/', '*.*'))
-    internal_folder_contents = glob.glob(os.path.join('./Data/internal/', '*.*'))
-
-    # Esure that Each folder contains a single data file
-    if len(ucas_folder_contents) < 1 or len(ucas_folder_contents) > 1:
-        print("[ERROR] Please ensure that UCAS folder contains a single data file")
+    # Ensure that data/ucas and data/scl exist 
+    if not os.path.exists('./data'):
+        print('[ERROR] The following folders do not exist:\n\t- ./data\n\t- ./data/ucas\n\t- ./data/scl\n\t- ./data/training\nThey will now be created. ', end='')
+        os.mkdir('./data')
+        os.mkdir('./data/ucas')
+        os.mkdir('./data/scl')
+        os.mkdir('./data/training')
+        print('(Finished)\n')
         exit(0)
 
-    if len(internal_folder_contents) < 1 or len(internal_folder_contents) > 1:
-        print("[ERROR] Please ensure that Internal folder contains a single data file")
+    # Gets filenames and paths of UCAS and SCL documents
+    ucas_folder_contents = glob.glob(os.path.join('./data/ucas/', '*.*'))
+    scl_folder_contents = glob.glob(os.path.join('./data/scl/', '*.*'))
+
+    # Esure that Each folder contains a single data file
+    ucas_missing = len(ucas_folder_contents) < 1 or len(ucas_folder_contents) > 1
+    scl_missing = len(scl_folder_contents) < 1 or len(scl_folder_contents) > 1
+
+    if ucas_missing and scl_missing:
+        print("[ERROR] Please add SCL and UCAS data to the appropriate folders.\n")
+        exit(0)
+
+    if ucas_missing:
+        print("[ERROR] Please ensure that UCAS folder contains a single data file.\n")
+        exit(0)
+
+    if scl_missing:
+        print("[ERROR] Please ensure that SCL folder contains a single data file.\n")
         exit(0)
 
     # Store filepath for each file
     ucas_path = ucas_folder_contents[0]
-    internal_path = internal_folder_contents[0]
+    internal_path = scl_folder_contents[0]
 
     # Pre-clean both data files to remove any unwanted characters that may cause issue 
     pre_clean(ucas_path)
@@ -56,10 +71,9 @@ def run_menu():
     print('\n1. Find centres with internal ID that now have relevant UCAS ID.')
     print()
 
-    selection = input("Please enter selection: ")
-    #selection = '1'
+    selection = input("Please enter selection number: ")
 
-    print('\n')
+    print()
 
     if selection == '1':
         centre_search(ucas_data, internal_data)
