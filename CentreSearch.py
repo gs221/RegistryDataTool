@@ -30,8 +30,8 @@ def centre_search(ucas: DataFrame, internal: DataFrame):
     without_ucas.to_csv('./in/scl.csv', index=False)
 
     # Run CSV Link
-    #linker = csvlink.CSVLink()
-    #linker.run()
+    linker = csvlink.CSVLink()
+    linker.run()
 
     # Remove in directory 
     if os.path.exists('./in'):

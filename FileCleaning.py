@@ -33,19 +33,10 @@ def format_scl(f):
   # Make all columns uppercase
   results = results.apply(lambda x: x.str.upper())
 
-  # Extract ucas columns from results
-  ucas = results.loc[:, 'School': 'Merged with school code']
-
-  # Make everything uppercase, excluding email 
-  ucas = ucas.
-
-  # Drop existing columns from results 
-  columns_to_modify = ucas.columns
-  results.drop(labels=columns_to_modify, axis='columns', inplace=True)
-  
-  # Re-insert columns with formatting applied
-  results[columns_to_modify] = ucas[columns_to_modify]
+  # Make email and Fax number columns lower case
+  results['Email address'] = results['Email address'].str.lower()
+  results['Fax number'] = results['Fax number'].str.lower()
   
   print(' (Finished)')
 
-  results.to_csv('results_test.csv')
+  results.to_csv('results.csv', index=False)
