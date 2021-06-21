@@ -1,4 +1,4 @@
-from numpy import spacing
+from numpy import result_type, spacing
 import pandas as pd
 from pandas import DataFrame
 import os
@@ -22,7 +22,7 @@ def format_scl(f):
 
   print('[INFO] Formatting SCL Data in', f, end='')
 
-  # Check results file has been crated 
+  # Check results file has been created 
   if not os.path.isfile(f):
     print('[ERROR] Results file does not exist or could not be found.')
     exit(0)
@@ -39,4 +39,20 @@ def format_scl(f):
   
   print(' (Finished)')
 
+  #extract_new_ucas(results)
+
   results.to_csv('results.csv', index=False)
+
+def extract_new_ucas(df: DataFrame):
+  print('[INFO] Extracting potential new UCAS schools into new_ucas.csv', end='')
+
+  # Get ucas column names 
+  scl_column = df.loc[:, 'School code': 'EDUBASE URN'].columns
+  ucas_column = df.loc[:, 'School': 'Merged with school code'].columns
+
+  df.dropna(axis=0, how='all', subset=scl_column, inplace=True)
+  df.dropna(axis=0, how='all', subset=ucas_column, inplace=True)
+
+  print(df.to_csv('test.csv'))
+
+  print(' (Finished)')

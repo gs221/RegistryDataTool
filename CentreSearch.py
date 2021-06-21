@@ -1,4 +1,4 @@
-from FileCleaning import format_scl
+from FileManager import format_scl
 import os
 import shutil
 
@@ -39,3 +39,4 @@ def centre_search(ucas: DataFrame, internal: DataFrame):
 
     # Format school table fields in results 
     format_scl('results.csv')
+    
