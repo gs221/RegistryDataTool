@@ -5,7 +5,7 @@ import pandas as pd
 from pandas import DataFrame
 from detect_delimiter import detect
 from CentreSearch import centre_search
-from PreClean import pre_clean
+from FileCleaning import pre_clean
 
 # Main Function
 def main():
