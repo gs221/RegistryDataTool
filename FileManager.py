@@ -18,41 +18,36 @@ def pre_clean(f):
 
   print(' (Finished)')
 
-def format_scl(f):
+def format_results(m, s, u):
 
-  print('[INFO] Formatting SCL Data in', f, end='')
+  print('[INFO] Formatting results data.', end='')
 
   # Check results file has been created 
-  if not os.path.isfile(f):
-    print('[ERROR] Results file does not exist or could not be found.')
+  if not (os.path.isfile(m) and os.path.isfile(s) and os.path.isfile(u)):
+    print('[ERROR] Could not locate results files.')
     exit(0)
 
   # Import results data into pandas
-  results: DataFrame = pd.read_csv(f, sep=',', dtype=str, keep_default_na=False)
+  potential_matches: DataFrame = pd.read_csv(m, sep=',', dtype=str, keep_default_na=False)
+  scl_only: DataFrame = pd.read_csv(s, sep=',', dtype=str, keep_default_na=False)
+  ucas_only: DataFrame = pd.read_csv(u, sep=',', dtype=str, keep_default_na=False)
 
-  # Make all columns uppercase
-  results = results.apply(lambda x: x.str.upper())
+  # Make all columns uppercase in all files
+  potential_matches = potential_matches.apply(lambda x: x.str.upper())
+  scl_only = scl_only.apply(lambda x: x.str.upper())
+  ucas_only = ucas_only.apply(lambda x: x.str.upper())
 
-  # Make email and Fax number columns lower case
-  results['Email address'] = results['Email address'].str.lower()
-  results['Fax number'] = results['Fax number'].str.lower()
+  # Make email and Fax number columns lower case in the potential matches and scl files
+  potential_matches['Email address'] = potential_matches['Email address'].str.lower()
+  potential_matches['Fax number'] = potential_matches['Fax number'].str.lower()
+
+  scl_only['Email address'] = scl_only['Email address'].str.lower()
+  scl_only['Fax number'] = scl_only['Fax number'].str.lower()
   
   print(' (Finished)')
 
-  #extract_new_ucas(results)
+  # Write formatted tables to files 
+  potential_matches.to_csv('potential_matches.csv', index=False)
+  scl_only.to_csv('scl_only.csv', index=False)
+  ucas_only.to_csv('ucas_only.csv', index=False)
 
-  results.to_csv('results.csv', index=False)
-
-def extract_new_ucas(df: DataFrame):
-  print('[INFO] Extracting potential new UCAS schools into new_ucas.csv', end='')
-
-  # Get ucas column names 
-  scl_column = df.loc[:, 'School code': 'EDUBASE URN'].columns
-  ucas_column = df.loc[:, 'School': 'Merged with school code'].columns
-
-  df.dropna(axis=0, how='all', subset=scl_column, inplace=True)
-  df.dropna(axis=0, how='all', subset=ucas_column, inplace=True)
-
-  print(df.to_csv('test.csv'))
-
-  print(' (Finished)')

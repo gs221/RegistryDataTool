@@ -148,20 +148,17 @@ class CSVLink(csvhelpers.CSVCommand):
         logging.info('# duplicate sets %s' % len(clustered_dupes))
 
         write_function = csvhelpers.writeLinkedResults
+        
         # write out our results
-
-        if self.output_file:
+        if self.potential_matches and self.ucas_only and self.scl_only:
             if sys.version < '3' :
-                with open(self.output_file, 'wb', encoding='utf-8') as output_file:
-                    write_function(clustered_dupes, self.input_1, self.input_2,
-                                   output_file, self.inner_join)
+                with open(self.potential_matches, 'wb', encoding='utf-8') as pm, open(self.scl_only, 'wb', encoding='utf-8') as scl, open(self.ucas_only, 'wb', encoding='utf-8') as ucas:
+                    write_function(clustered_dupes, self.input_1, self.input_2, pm, ucas, scl, self.inner_join)
             else :
-                with open(self.output_file, 'w', encoding='utf-8') as output_file:
-                    write_function(clustered_dupes, self.input_1, self.input_2,
-                                   output_file, self.inner_join)
+                with open(self.potential_matches, 'w', encoding='utf-8') as pm, open(self.scl_only, 'w', encoding='utf-8') as scl, open(self.ucas_only, 'w', encoding='utf-8') as ucas:
+                    write_function(clustered_dupes, self.input_1, self.input_2, pm, ucas, scl, self.inner_join)
         else:
-            write_function(clustered_dupes, self.input_1, self.input_2,
-                           sys.stdout, self.inner_join)
+            write_function(clustered_dupes, self.input_1, self.input_2, sys.stdout, self.inner_join)
 
 
 def exact_matches(data_1, data_2, match_fields):

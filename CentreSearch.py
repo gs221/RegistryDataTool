@@ -1,4 +1,4 @@
-from FileManager import format_scl
+from FileManager import format_results
 import os
 import shutil
 
@@ -37,6 +37,6 @@ def centre_search(ucas: DataFrame, internal: DataFrame):
     if os.path.exists('./in'):
         shutil.rmtree('./in')
 
-    # Format school table fields in results 
-    format_scl('results.csv')
+    # Format results
+    format_results('potential_matches.csv', 'scl_only.csv', 'ucas_only.csv')
     

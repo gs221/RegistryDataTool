@@ -58,79 +58,8 @@ def readData(input_file, field_names, delimiter=',', prefix=None):
 
 
 # ## Writing results
-def writeResults(clustered_dupes, input_file, output_file):
-
-    # Write our original data back out to a CSV with a new column called 
-    # 'Cluster ID' which indicates which records refer to each other.
-
-    logging.info('saving results to: %s' % output_file)
-
-    cluster_membership = {}
-    for cluster_id, (cluster, score) in enumerate(clustered_dupes):
-        for record_id in cluster:
-            cluster_membership[record_id] = cluster_id
-
-    unique_record_id = cluster_id + 1
-
-    writer = csv.writer(output_file)
-
-    reader = csv.reader(StringIO(input_file))
-
-    heading_row = next(reader)
-    heading_row.insert(0, u'Cluster ID')
-    writer.writerow(heading_row)
-
-    for row_id, row in enumerate(reader):
-        if row_id in cluster_membership:
-            cluster_id = cluster_membership[row_id]
-        else:
-            cluster_id = unique_record_id
-            unique_record_id += 1
-        row.insert(0, cluster_id)
-        writer.writerow(row)
-
-
-# ## Writing results
-def writeUniqueResults(clustered_dupes, input_file, output_file):
-
-    # Write our original data back out to a CSV with a new column called 
-    # 'Cluster ID' which indicates which records refer to each other.
-
-    logging.info('saving unique results to: %s' % output_file)
-
-    cluster_membership = {}
-    for cluster_id, (cluster, score) in enumerate(clustered_dupes):
-        for record_id in cluster:
-            cluster_membership[record_id] = cluster_id
-
-    unique_record_id = cluster_id + 1
-
-    writer = csv.writer(output_file)
-
-    reader = csv.reader(StringIO(input_file))
-
-    heading_row = next(reader)
-    heading_row.insert(0, u'Cluster ID')
-    writer.writerow(heading_row)
-
-    seen_clusters = set()
-    for row_id, row in enumerate(reader):
-        if row_id in cluster_membership:
-            cluster_id = cluster_membership[row_id]
-            if cluster_id not in seen_clusters:
-                row.insert(0, cluster_id)
-                writer.writerow(row)
-                seen_clusters.add(cluster_id)
-        else:
-            cluster_id = unique_record_id
-            unique_record_id += 1
-            row.insert(0, cluster_id)
-            writer.writerow(row)
-
-
-def writeLinkedResults(clustered_pairs, input_1, input_2, output_file,
-                       inner_join=False):
-    logging.info('saving unique results to: %s' % output_file)
+def writeLinkedResults(clustered_pairs, input_1, input_2, potential_matches, ucas_only, scl_only , inner_join=False):
+    logging.info('[INFO] Saving potential matches to: %s' % potential_matches)
 
     matched_records = []
     seen_1 = set()
@@ -138,12 +67,11 @@ def writeLinkedResults(clustered_pairs, input_1, input_2, output_file,
 
     input_1 = [row for row in csv.reader(StringIO(input_1))]
     row_header = input_1.pop(0)
-    length_1 = len(row_header)
 
     input_2 = [row for row in csv.reader(StringIO(input_2))]
     row_header_2 = input_2.pop(0)
-    length_2 = len(row_header_2)
-    row_header += row_header_2
+    
+    all_headers = row_header + row_header_2
 
     for pair in clustered_pairs:
         index_1, index_2 = [int(index.split('|', 1)[1]) for index in pair[0]]
@@ -152,21 +80,26 @@ def writeLinkedResults(clustered_pairs, input_1, input_2, output_file,
         seen_1.add(index_1)
         seen_2.add(index_2)
 
-    writer = csv.writer(output_file)
-    writer.writerow(row_header)
+    match_writer = csv.writer(potential_matches)
+    ucas_writer = csv.writer(ucas_only)
+    scl_writer = csv.writer(scl_only)
+
+    match_writer.writerow(all_headers)
+    scl_writer.writerow(row_header)
+    ucas_writer.writerow(row_header_2)
 
     for matches in matched_records:
-        writer.writerow(matches)
+        match_writer.writerow(matches)
 
     if not inner_join:
 
         for i, row in enumerate(input_1):
             if i not in seen_1:
-                writer.writerow(row + [None] * length_2)
+                scl_writer.writerow(row)
 
         for i, row in enumerate(input_2):
             if i not in seen_2:
-                writer.writerow([None] * length_1 + row)
+                ucas_writer.writerow(row)
 
 class CSVCommand(object) :
     def __init__(self) :
@@ -183,7 +116,9 @@ class CSVCommand(object) :
                 "Could not find config file. Did you name it correctly?")
 
         # Set values from config file, or use defaults
-        self.output_file = self.configuration.get('output_file', None)
+        self.potential_matches = self.configuration.get('matches_file', None)
+        self.ucas_only = self.configuration.get('ucas_only_file', None)
+        self.scl_only = self.configuration.get('scl_only_file', None)
         
         selection = input("Would you like to run with existing training data? (y/n) ")
 
