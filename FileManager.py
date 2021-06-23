@@ -1,7 +1,6 @@
-from numpy import result_type, spacing
+import os
 import pandas as pd
 from pandas import DataFrame
-import os
 
 # Cleans the files before initial pandas import
 def pre_clean(f):

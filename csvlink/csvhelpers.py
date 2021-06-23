@@ -1,5 +1,3 @@
-from future.builtins import next
-
 import os
 import re
 import glob
@@ -7,6 +5,7 @@ import logging
 from io import StringIO, open
 import sys
 import platform
+
 if sys.version < '3' :
     from backports import csv
 else :
@@ -27,6 +26,7 @@ def preProcess(column):
     column = re.sub('  +', ' ', column)
     column = re.sub('\n', ' ', column)
     column = column.strip().strip('"').strip("'").lower().strip()
+    
     if column == '' :
         column = None
     return column
@@ -59,7 +59,9 @@ def readData(input_file, field_names, delimiter=',', prefix=None):
 
 # ## Writing results
 def writeLinkedResults(clustered_pairs, input_1, input_2, potential_matches, ucas_only, scl_only , inner_join=False):
-    logging.info('[INFO] Saving potential matches to: %s' % potential_matches)
+    print('[INFO] Saving potential matches to: ', potential_matches.name)
+    print('[INFO] Saving schools that only appeared in ucas data to: ', ucas_only.name)
+    print('[INFO] Saving schools that only appeared in scl data to ', scl_only.name)
 
     matched_records = []
     seen_1 = set()
@@ -80,23 +82,28 @@ def writeLinkedResults(clustered_pairs, input_1, input_2, potential_matches, uca
         seen_1.add(index_1)
         seen_2.add(index_2)
 
+    # Create csv writers for all output files using passed in filenames
     match_writer = csv.writer(potential_matches)
     ucas_writer = csv.writer(ucas_only)
     scl_writer = csv.writer(scl_only)
 
+    # Write headings to each of the output files 
     match_writer.writerow(all_headers)
     scl_writer.writerow(row_header)
     ucas_writer.writerow(row_header_2)
 
+    # Write all matches to file 
     for matches in matched_records:
         match_writer.writerow(matches)
 
     if not inner_join:
 
+        # Print rows that were only in input one 
         for i, row in enumerate(input_1):
             if i not in seen_1:
                 scl_writer.writerow(row)
 
+        # Print rows that were only in input two
         for i, row in enumerate(input_2):
             if i not in seen_2:
                 ucas_writer.writerow(row)
@@ -113,7 +120,7 @@ class CSVCommand(object) :
                 self.configuration.update(config)
         except IOError:
             raise self.parser.error(
-                "Could not find config file. Did you name it correctly?")
+                "[ERROR] Could not find config file. Did you name it correctly?")
 
         # Set values from config file, or use defaults
         self.potential_matches = self.configuration.get('matches_file', None)

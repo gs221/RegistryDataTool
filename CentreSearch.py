@@ -1,10 +1,10 @@
-from FileManager import format_results
+
 import os
 import shutil
 
-import pandas as pd
 from pandas import DataFrame
 from csvlink import csvlink
+from FileManager import format_results
 
 # Searches for centres that now use UCAS code 
 def centre_search(ucas: DataFrame, internal: DataFrame):
@@ -14,9 +14,6 @@ def centre_search(ucas: DataFrame, internal: DataFrame):
 
     # Remove UCAS codes and other malformed codes leaving only internal codes
     without_ucas = internal[internal['School code'].str.contains(r'^[a-zA-Z]{2}\d{3,5}$', na=False)]
-
-    # Get schools that now have UCAS code 
-    duplicates = internal[internal['Postcode'].isin(removed_common['Postcode'])]
     
     # Generate directory for pandas generated csv files
     if not os.path.exists('./in'):
