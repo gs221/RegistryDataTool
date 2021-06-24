@@ -1,9 +1,0 @@
-{
-  "input": ["./in/scl.csv", "./in/ucas.csv"],
-  "field_names_1": ["Full name", "Address Line 1", "Address Line 2", "Address Line 3", "Address Line 4", "Postcode"],
-  "field_names_2": ["School Name", "Address line 1", "Address line 2", "Address line 3", "Address line 4", "Postcode"],
-  "matches_file": "potential_matches.csv",
-  "ucas_only_file": "ucas_only.csv",
-  "scl_only_file": "scl_only.csv",
-  "recall_weight": 15
-}

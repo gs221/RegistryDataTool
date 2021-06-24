@@ -1,44 +1,39 @@
-import logging
+
 import os
 import sys
-from io import open
-
-from . import csvhelpers
 import dedupe
+import logging
 
-class CSVLink(csvhelpers.CSVCommand):
-    def __init__(self):
-        super(CSVLink, self).__init__()
+from io import open
+from . import csv_helpers
 
+
+class CsvLink(csv_helpers.CsvSetup):
+    def __init__(self, configuration: dict):
+        super(CsvLink, self).__init__(configuration)
+
+        """ Following initialisation, sets up input files and fields for linker. """
+
+        # If two input files are given in config file 
         if len(self.configuration['input']) == 2:
             try:
                 self.input_1 = open(self.configuration['input'][0], encoding='utf-8').read()
             except IOError:
-                raise self.parser.error("Could not find the file %s" %
-                                   (self.configuration['input'][0], ))
+                raise self.parser.error("Could not find the file %s" % (self.configuration['input'][0], ))
 
             try:
                 self.input_2 = open(self.configuration['input'][1], encoding='utf-8').read()
             except IOError:
-                raise self.parser.error("Could not find the file %s" %
-                                   (self.configuration['input'][1], ))
-
+                raise self.parser.error("Could not find the file %s" % (self.configuration['input'][1], ))
         else:
             raise self.parser.error("You must provide two input files.")
 
-        if 'field_names' in self.configuration:
-            if 'field_names_1' in self.configuration or 'field_names_2' in self.configuration:
-                raise self.parser.error(
-                    "You should only define field_names or individual dataset fields (field_names_1 and field_names_2")
-            else:
-                self.field_names_1 = self.configuration['field_names']
-                self.field_names_2 = self.configuration['field_names']
-        elif 'field_names_1' in self.configuration and 'field_names_2' in self.configuration:
-            self.field_names_1 = self.configuration['field_names_1']
-            self.field_names_2 = self.configuration['field_names_2']
+        # If field names are given correctly in config file
+        if 'scl_field_names' in self.configuration and 'ucas_field_names' in self.configuration:
+            self.field_names_1 = self.configuration['scl_field_names']
+            self.field_names_2 = self.configuration['ucas_field_names']
         else:
-            raise self.parser.error(
-                "You must provide field_names of field_names_1 and field_names_2")
+            raise self.parser.error("[ERROR] You must provide scl_field_names and ucas_field_names in configuration file.")
 
         self.inner_join = self.configuration.get('inner_join', False)
 
@@ -47,70 +42,54 @@ class CSVLink(csvhelpers.CSVCommand):
                                       'type': 'String'}
                                      for field in self.field_names_1]
 
-    def run(self):
+
+    def run(self) -> None:
+        """ Runs the linking program. """
 
         data_1 = {}
         data_2 = {}
-        # import the specified CSV file
-
-        data_1 = csvhelpers.readData(self.input_1, self.field_names_1,
-                                    delimiter=self.delimiter,
-                                    prefix='input_1')
-        data_2 = csvhelpers.readData(self.input_2, self.field_names_2,
-                                    delimiter=self.delimiter,
-                                    prefix='input_2')
+        
+        # Read configured csv files
+        data_1 = csv_helpers.readData(self.input_1, self.field_names_1, delimiter=self.delimiter, prefix='input_1')
+        data_2 = csv_helpers.readData(self.input_2, self.field_names_2, delimiter=self.delimiter, prefix='input_2')
 
         # sanity check for provided field names in CSV file
         for field in self.field_names_1:
             if field not in list(data_1.values())[0]:
-                raise self.parser.error(
-                    "Could not find field '" + field + "' in input")
+                raise self.parser.error("Could not find field '" + field + "' in input")
 
         for field in self.field_names_2:
             if field not in list(data_2.values())[0]:
-                raise self.parser.error(
-                    "Could not find field '" + field + "' in input")
+                raise self.parser.error("Could not find field '" + field + "' in input")
 
         if self.field_names_1 != self.field_names_2:
             for record_id, record in data_2.items():
                 remapped_record = {}
-                for new_field, old_field in zip(self.field_names_1,
-                                                self.field_names_2):
-                    remapped_record[new_field] = record[old_field]
-                data_2[record_id] = remapped_record
+                for new_field, old_field in zip(self.field_names_1, self.field_names_2):
+                    remapped_record[new_field] = record[old_field] 
+                    data_2[record_id] = remapped_record
 
         logging.info('imported %d rows from file 1', len(data_1))
         logging.info('imported %d rows from file 2', len(data_2))
 
-        logging.info('using fields: %s' % [field['field']
-                                           for field in self.field_definition])
+        logging.info('using fields: %s' % [field['field'] for field in self.field_definition])
 
-        # If --skip_training has been selected, and we have a settings cache still
-        # persisting from the last run, use it in this next run.
-        # __Note:__ if you want to add more training data, don't use skip training
         if self.skip_training and os.path.exists(self.settings_file):
 
             # Load our deduper from the last training session cache.
-            logging.info('reading from previous training cache %s'
-                                                          % self.settings_file)
+            logging.info('reading from previous training cache %s' % self.settings_file)
             with open(self.settings_file, 'rb') as f:
                 deduper = dedupe.StaticRecordLink(f)
                 
-
             fields = {variable.field for variable in deduper.data_model.primary_fields}
-            (nonexact_1,
-             nonexact_2,
-             exact_pairs) = exact_matches(data_1, data_2, fields)
-            
+            (nonexact_1, nonexact_2, exact_pairs) = exact_matches(data_1, data_2, fields)
             
         else:
-            # # Create a new deduper object and pass our data model to it.
+            # Create a new deduper object and pass our data model to it.
             deduper = dedupe.RecordLink(self.field_definition)
 
             fields = {variable.field for variable in deduper.data_model.primary_fields}
-            (nonexact_1,
-             nonexact_2,
-             exact_pairs) = exact_matches(data_1, data_2, fields)
+            (nonexact_1, nonexact_2, exact_pairs) = exact_matches(data_1, data_2, fields)
 
             # Set up our data sample
             logging.info('taking a sample of %d possible pairs', self.sample_size)
@@ -120,7 +99,6 @@ class CSVLink(csvhelpers.CSVCommand):
             self.dedupe_training(deduper)
 
         # ## Blocking
-
         logging.info('blocking...')
 
         # ## Clustering
@@ -132,10 +110,8 @@ class CSVLink(csvhelpers.CSVCommand):
         # If we had more data, we would not pass in all the blocked data into
         # this function but a representative sample.
 
-        logging.info('finding a good threshold with a recall_weight of %s' %
-                     self.recall_weight)
-        threshold = deduper.threshold(data_1, data_2,
-                                      recall_weight=self.recall_weight)
+        logging.info('finding a good threshold with a recall_weight of %s' % self.recall_weight)
+        threshold = deduper.threshold(data_1, data_2, recall_weight=self.recall_weight)
 
         # `duplicateClusters` will return sets of record IDs that dedupe
         # believes are all referring to the same entity.
@@ -147,7 +123,7 @@ class CSVLink(csvhelpers.CSVCommand):
 
         logging.info('# duplicate sets %s' % len(clustered_dupes))
 
-        write_function = csvhelpers.writeLinkedResults
+        write_function = csv_helpers.writeLinkedResults
         
         # write out our results
         if self.potential_matches and self.ucas_only and self.scl_only:
@@ -161,7 +137,9 @@ class CSVLink(csvhelpers.CSVCommand):
             write_function(clustered_dupes, self.input_1, self.input_2, sys.stdout, self.inner_join)
 
 
-def exact_matches(data_1, data_2, match_fields):
+def exact_matches(data_1, data_2, match_fields) -> tuple[dict, dict, dict]:
+    """ Identifies exact and non-exact matches between datasets. """
+
     nonexact_1 = {}
     nonexact_2 = {}
     exact_pairs = []
