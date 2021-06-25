@@ -18,18 +18,18 @@ class CsvLink(csv_helpers.CsvSetup):
         # If two input files are given in config file 
         if len(self.configuration['input']) == 2:
 
-            input_one_path = self.configuration['input_path'] + self.configuration['input'][0]
-            input_two_path = self.configuration['input_path'] + self.configuration['input'][1]
+            input_one = self.configuration['input'][0]
+            input_two = self.configuration['input'][1]
 
             try:
-                self.input_1 = open(input_one_path, encoding='utf-8').read()
+                self.input_1 = open(input_one, encoding='utf-8').read()
             except IOError:
-                print_err('[ERROR] Could not find input file at ' + input_one_path)
+                print_err('[ERROR] Could not find input file at ' + input_one)
 
             try:
-                self.input_2 = open(input_two_path, encoding='utf-8').read()
+                self.input_2 = open(input_two, encoding='utf-8').read()
             except IOError:
-                print_err('[ERROR] Could not find input file at ' + input_one_path)
+                print_err('[ERROR] Could not find input file at ' + input_two)
 
         else:
             print_err('[ERROR] You must supply two input paths in configuration file.')
