@@ -9,7 +9,7 @@ import os
 import shutil
 
 from pandas.core.frame import DataFrame
-from helpers import open_config_file
+from helpers import csv_to_upper, open_config_file
 from csv_dedupe import csv_link
 
 # Filepaths and filenames
@@ -17,6 +17,7 @@ configuration_path = './configurations/option_one_config.json'
 cleaned_csv_path = './data/cleaned'
 ucas_cleaned = '/ucas_cleaned.csv'
 scl_cleaned = '/scl_cleaned.csv'
+
 
 def match_schools(ucas: DataFrame, scl: DataFrame) -> None:
   """ Matches schools that are in two csv files. """
@@ -34,6 +35,16 @@ def match_schools(ucas: DataFrame, scl: DataFrame) -> None:
   # Remove cleaned directory as it is no longer required
   if os.path.exists('./data/cleaned'):
     shutil.rmtree('./data/cleaned')
+
+  # Get paths to results files from configuration 
+  potential_matches = configuration.get('matches_file')
+  ucas_only = configuration.get('ucas_only_file')
+  scl_only = configuration.get('scl_only_file')
+
+  # Format results to uppercase, excluding set columns
+  csv_to_upper(potential_matches, exclude=['Fax number', 'Email address'])
+  csv_to_upper(scl_only, exclude=['Fax number', 'Email address'])
+  csv_to_upper(ucas_only)
  
 
 def generate_clean_files(ucas: DataFrame, scl: DataFrame) -> None:
