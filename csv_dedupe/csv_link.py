@@ -6,6 +6,7 @@ import logging
 
 from io import open
 from . import csv_helpers
+from helpers import print_err
 
 
 class CsvLink(csv_helpers.CsvSetup):
@@ -16,17 +17,22 @@ class CsvLink(csv_helpers.CsvSetup):
 
         # If two input files are given in config file 
         if len(self.configuration['input']) == 2:
-            try:
-                self.input_1 = open(self.configuration['input'][0], encoding='utf-8').read()
-            except IOError:
-                raise self.parser.error("Could not find the file %s" % (self.configuration['input'][0], ))
+
+            input_one_path = self.configuration['input_path'] + self.configuration['input'][0]
+            input_two_path = self.configuration['input_path'] + self.configuration['input'][1]
 
             try:
-                self.input_2 = open(self.configuration['input'][1], encoding='utf-8').read()
+                self.input_1 = open(input_one_path, encoding='utf-8').read()
             except IOError:
-                raise self.parser.error("Could not find the file %s" % (self.configuration['input'][1], ))
+                print_err('[ERROR] Could not find input file at ' + input_one_path)
+
+            try:
+                self.input_2 = open(input_two_path, encoding='utf-8').read()
+            except IOError:
+                print_err('[ERROR] Could not find input file at ' + input_one_path)
+
         else:
-            raise self.parser.error("You must provide two input files.")
+            print_err('[ERROR] You must supply two input paths in configuration file.')
 
         # If field names are given correctly in config file
         if 'scl_field_names' in self.configuration and 'ucas_field_names' in self.configuration:
@@ -56,11 +62,11 @@ class CsvLink(csv_helpers.CsvSetup):
         # sanity check for provided field names in CSV file
         for field in self.field_names_1:
             if field not in list(data_1.values())[0]:
-                raise self.parser.error("Could not find field '" + field + "' in input")
+                print_err("Could not find field '" + field + "' in input")
 
         for field in self.field_names_2:
             if field not in list(data_2.values())[0]:
-                raise self.parser.error("Could not find field '" + field + "' in input")
+                print_err("Could not find field '" + field + "' in input")
 
         if self.field_names_1 != self.field_names_2:
             for record_id, record in data_2.items():

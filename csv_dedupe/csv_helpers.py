@@ -62,9 +62,9 @@ def writeLinkedResults(clustered_pairs, input_1, input_2, potential_matches, uca
         - Records unique to ucas: written to a file with specified name. 
     """
 
-    print('[INFO] Saving potential matches to: ', potential_matches.name)
-    print('[INFO] Saving schools that only appeared in ucas data to: ', ucas_only.name)
-    print('[INFO] Saving schools that only appeared in scl data to ', scl_only.name)
+    print('[INFO] Saving potential matches to:', potential_matches.name)
+    print('[INFO] Saving schools that only appeared in ucas data to:', ucas_only.name)
+    print('[INFO] Saving schools that only appeared in scl data to', scl_only.name)
 
     matched_records = []
     seen_1 = set()
@@ -153,8 +153,7 @@ class CsvSetup(object) :
         """ Loads existing training data, or starts manual training process. """
 
         if os.path.exists(self.training_file):
-            logging.info('Reading labeled examples from %s' %
-                         self.training_file)
+            logging.info('Reading labeled examples from %s' % self.training_file)
             with open(self.training_file) as tf:
                 deduper.readTraining(tf)
 

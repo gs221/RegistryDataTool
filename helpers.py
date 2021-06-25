@@ -52,7 +52,7 @@ def try_again() -> None:
         if value == 'c': sys.exit(0) 
 
 
-def csv_to_upper(file_path: str, exclude=[]):
+def csv_to_upper(file_path: str, exclude=[]) -> None:
   """ Converts every column to uppercase in given file excluding column names set to exclude. """
 
   # Check that file exists 
@@ -83,3 +83,9 @@ def csv_to_upper(file_path: str, exclude=[]):
   file_data.to_csv(file_path, index=False)
 
   print(' (Finished)')
+
+
+def print_err(msg: str) -> None:
+  """ Prints supplied error message and sys.exits(1) """
+  print(msg)
+  sys.exit(1)
