@@ -13,19 +13,18 @@ from helpers import csv_to_upper, open_config_file
 from csv_dedupe import csv_link
 
 # Filepaths and filenames
-configuration_path = './configurations/option_one_config.json'
 cleaned_csv_path = './data/cleaned/'
-ucas_cleaned = 'ucas_for_op1.csv'
-scl_cleaned = 'scl_for_op1.csv'
+ucas_cleaned = 'ucas_for_option1.csv'
+scl_cleaned = 'scl_for_option1.csv'
 
-def match_schools(ucas: DataFrame, scl: DataFrame) -> None:
+def match_schools(ucas: DataFrame, scl: DataFrame, config_path: str) -> None:
   """ Matches schools that are in two csv files. """
 
   # Generate files for linker 
   generate_clean_files(ucas, scl)
 
   # Open and store configuration information from supplied file. 
-  configuration = open_config_file(configuration_path)
+  configuration = open_config_file(config_path)
 
   # Add input file paths to configuration
   configuration['input'] = [cleaned_csv_path + scl_cleaned, cleaned_csv_path + ucas_cleaned]
@@ -60,9 +59,6 @@ def generate_clean_files(ucas: DataFrame, scl: DataFrame) -> None:
 
   # Generate directory for pandas generated csv files
   if not os.path.exists(cleaned_csv_path):
-      os.mkdir(cleaned_csv_path)
-  else:
-      shutil.rmtree(cleaned_csv_path)
       os.mkdir(cleaned_csv_path)
 
   # Generate files and place in directory

@@ -6,6 +6,7 @@ from pandas import DataFrame
 from detect_delimiter import detect
 from helpers import pre_clean, try_again
 from school_matcher import match_schools
+from duplicate_detector import detect_duplicates
 
 def run_menu() -> None:
     """ - Verifies that required folders and documents are available.
@@ -40,18 +41,20 @@ def run_menu() -> None:
 
     # Stores file contents present in ucas and scl folders into data frames
     ucas_data: DataFrame = pd.read_csv(ucas_path, sep=ucas_delimiter, dtype=str, usecols=[i for i in range(30)], keep_default_na=False)    
-    internal_data: DataFrame = pd.read_csv(scl_path, sep=internal_delimiter, dtype=str, usecols=[i for i in range(80)], keep_default_na=False)
+    scl_data: DataFrame = pd.read_csv(scl_path, sep=internal_delimiter, dtype=str, usecols=[i for i in range(80)], keep_default_na=False)
 
     # Menu options
     print('\n1. Find centres with internal ID that now have relevant UCAS ID.')
+    print('2. Detect duplicate schools in UCAS data only.')
+    print('3. Detect duplicates in SCL data only.')
     print()
     selection = input("Please enter selection number: ")
     print()
 
-    if selection == '1':
-        match_schools(ucas_data, internal_data)
-    else:
-        print('[ERROR] Please run again and select a valid option (1)')
+    if selection == '1': match_schools(ucas_data, scl_data, './configurations/option_one_config.json')
+    elif selection == '2': detect_duplicates(ucas_data, './configurations/option_two_config.json')
+    elif selection == '3': detect_duplicates(scl_data, './configurations/option_three_config.json')
+    else: print('[ERROR] Please run again and select a valid option (1)')
 
 
 def check_data_folder_exists() -> None:

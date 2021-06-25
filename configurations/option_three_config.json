@@ -1,0 +1,13 @@
+{
+  "file_type": "scl", 
+  "results_file": "scl_only_potential_duplicates.csv",
+  "field_names": [
+    "Full name",
+    "Address Line 1",
+    "Address Line 2",
+    "Address Line 3",
+    "Address Line 4",
+    "Postcode"
+  ], 
+  "recall_weight": 15
+}

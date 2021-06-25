@@ -1,0 +1,13 @@
+{
+  "file_type": "ucas",
+  "results_file": "ucas_only_potential_duplicates.csv",
+  "field_names": [
+    "School Name",
+    "Address line 1",
+    "Address line 2",
+    "Address line 3",
+    "Address line 4",
+    "Postcode"
+  ], 
+  "recall_weight": 15
+}

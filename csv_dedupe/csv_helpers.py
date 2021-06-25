@@ -55,11 +55,79 @@ def readData(input_file, field_names, delimiter=',', prefix=None) -> dict:
     return data
 
 
+def writeResults(clustered_dupes, input_file, results_file):
+
+    """ Writes original data back out to a CSV with a new column called 'Cluster ID' indicating which records refer to each other. """
+
+    print('[INFO] Saving results to: %s' % results_file)
+
+    cluster_membership = {}
+    for cluster_id, (cluster, score) in enumerate(clustered_dupes):
+        for record_id in cluster:
+            cluster_membership[record_id] = cluster_id
+
+    unique_record_id = cluster_id + 1
+
+    writer = csv.writer(results_file)
+
+    reader = csv.reader(StringIO(input_file))
+
+    heading_row = next(reader)
+    heading_row.insert(0, u'Cluster ID')
+    writer.writerow(heading_row)
+
+    for row_id, row in enumerate(reader):
+        if row_id in cluster_membership:
+            cluster_id = cluster_membership[row_id]
+        else:
+            cluster_id = unique_record_id
+            unique_record_id += 1
+        row.insert(0, cluster_id)
+        writer.writerow(row)
+
+
+def writeUniqueResults(clustered_dupes, input_file, results_file):
+
+    """ Discards clustered results and prints only unique, unmatched records. """
+
+    print('[INFO] Saving unique results to: %s' % results_file)
+
+    cluster_membership = {}
+    for cluster_id, (cluster, score) in enumerate(clustered_dupes):
+        for record_id in cluster:
+            cluster_membership[record_id] = cluster_id
+
+    unique_record_id = cluster_id + 1
+
+    writer = csv.writer(results_file)
+
+    reader = csv.reader(StringIO(input_file))
+
+    heading_row = next(reader)
+    heading_row.insert(0, u'Cluster ID')
+    writer.writerow(heading_row)
+
+    seen_clusters = set()
+    for row_id, row in enumerate(reader):
+        if row_id in cluster_membership:
+            cluster_id = cluster_membership[row_id]
+            if cluster_id not in seen_clusters:
+                row.insert(0, cluster_id)
+                writer.writerow(row)
+                seen_clusters.add(cluster_id)
+        else:
+            cluster_id = unique_record_id
+            unique_record_id += 1
+            row.insert(0, cluster_id)
+            writer.writerow(row)
+
+
 def writeLinkedResults(clustered_pairs, input_1, input_2, potential_matches, ucas_only, scl_only , inner_join=False) -> None:
     """ Writes results when two csv files are being searched for duplicates. 
         - Potential matches: written to a file with combined headers. 
         - Records unique to scl: written to a file with specified name.
-        - Records unique to ucas: written to a file with specified name. 
+        - Records unique to ucas: written to a file with specified name.\n 
+        NB: Only used in csv_linker.
     """
 
     print('[INFO] Saving potential matches to:', potential_matches.name)
@@ -123,6 +191,7 @@ class CsvSetup(object) :
         self.potential_matches = self.configuration.get('matches_file', None)
         self.ucas_only = self.configuration.get('ucas_only_file', None)
         self.scl_only = self.configuration.get('scl_only_file', None)
+        self.results_file = self.configuration.get('results_file', None)
         self.training_file = self.configuration.get('training_file', './data/training/training.json')
         self.settings_file = self.configuration.get('settings_file', './data/training/cached_settings')
         self.sample_size = self.configuration.get('sample_size', 1500)
