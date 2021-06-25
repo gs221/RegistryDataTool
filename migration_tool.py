@@ -44,9 +44,9 @@ def run_menu() -> None:
     scl_data: DataFrame = pd.read_csv(scl_path, sep=internal_delimiter, dtype=str, usecols=[i for i in range(80)], keep_default_na=False)
 
     # Menu options
-    print('\n1. Find centres with internal ID that now have relevant UCAS ID.')
-    print('2. Detect duplicate schools in UCAS data only.')
-    print('3. Detect duplicates in SCL data only.')
+    print('\n1. Find centres with internal ID that now have relevant UCAS ID. ~10min')
+    print('2. Detect duplicate schools in UCAS data only. ~15min')
+    print('3. Detect duplicates in SCL data only. ~15min')
     print()
     selection = input("Please enter selection number: ")
     print()

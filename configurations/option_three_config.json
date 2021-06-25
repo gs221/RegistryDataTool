@@ -7,7 +7,8 @@
     "Address Line 2",
     "Address Line 3",
     "Address Line 4",
-    "Postcode"
+    "Postcode", 
+    "Status"
   ], 
   "recall_weight": 15
 }

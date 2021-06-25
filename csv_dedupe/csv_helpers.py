@@ -199,7 +199,7 @@ class CsvSetup(object) :
         self.delimiter = self.configuration.get('delimiter',',')
 
         # Determine whether or not program should skip training
-        self.skip_training = ask_to_train()
+        self.skip_training = False # Always false to make program simpler, users must always train AI
 
         # Must use this method as 'field definition' is itself a dictionary 
         if 'field_definition' in self.configuration:
@@ -207,15 +207,9 @@ class CsvSetup(object) :
         else :
             self.field_definition = None
 
-        # Check if necessary training files exist should user opt to skip training 
-        while self.skip_training and not (os.path.exists(self.training_file) and os.path.exists(self.settings_file)):
-            print('\n[ERROR] Could not find training data. Please ensure that the following files are present:\n\t- ', self.training_file, '\n\t- ', self.settings_file, '\n')
-            try_again()
-
-        # Check if training folder is empty should user opt to train 
-        while not self.skip_training and (os.path.exists(self.training_file) or os.path.exists(self.settings_file)):
-            print('[ERROR] Please remove existing training data from training folder.')
-            try_again()
+        # Delete existing training data should any be present
+        if os.path.exists(self.training_file): os.remove(self.training_file)
+        if os.path.exists(self.settings_file): os.remove(self.settings_file)
 
 
     def dedupe_training(self, deduper: RecordLink) -> None:
@@ -248,12 +242,3 @@ class CsvSetup(object) :
         logging.info('Caching training result set to file %s' % self.settings_file)
         with open(self.settings_file, 'wb') as sf:
             deduper.writeSettings(sf)
-
-
-def ask_to_train() -> bool:
-  """ Asks the user if they wish to train the program or use existing training data. Returns true/false. """
-
-  while True:
-    value = input("Would you like to run with existing training data? (y/n) ").lower()
-    if value == 'y' or value == 'yes': return True
-    if value == 'n' or value == 'no': return False

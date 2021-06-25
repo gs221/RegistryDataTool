@@ -47,9 +47,9 @@ def try_again() -> None:
     """ Prompts the user to retry some process or exit program """
 
     while True:
-        value = input("Enter 't' to try again or 'c' to exit. ").lower()
+        value = input("Enter 't' to try again or 'e' to exit. ").lower()
         if value == 't': return
-        if value == 'c': sys.exit(0) 
+        if value == 'e': sys.exit(0) 
 
 
 def csv_to_upper(file_path: str, exclude=[]) -> None:
