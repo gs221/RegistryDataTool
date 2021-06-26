@@ -103,6 +103,9 @@ def main() -> None:
         run_menu()
     except ValueError as e:
         print(e)
+    except ZeroDivisionError as e:
+        print('[ERROR] An attempt was made to divide by zero. This is likely casued by an attempt to proceed without training the program.')
+
 
 # Executes main
 if __name__ == "__main__":
