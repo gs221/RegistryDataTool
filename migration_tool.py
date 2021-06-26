@@ -1,4 +1,5 @@
 import glob
+import sys
 import os
 
 import pandas as pd
@@ -7,6 +8,8 @@ from detect_delimiter import detect
 from helpers import pre_clean, try_again
 from school_matcher import match_schools
 from duplicate_detector import detect_duplicates
+from simple_term_menu import TerminalMenu
+
 
 def run_menu() -> None:
     """ - Verifies that required folders and documents are available.
@@ -44,17 +47,27 @@ def run_menu() -> None:
     scl_data: DataFrame = pd.read_csv(scl_path, sep=internal_delimiter, dtype=str, usecols=[i for i in range(80)], keep_default_na=False)
 
     # Menu options
-    print('\n1. Find centres with internal ID that now have relevant UCAS ID. ~10min')
-    print('2. Detect duplicate schools in UCAS data only. ~15min')
-    print('3. Detect duplicates in SCL data only. ~15min')
-    print()
-    selection = input("Please enter selection number: ")
-    print()
+    options = [
+        'Find centres with internal ID that now have relevant UCAS ID. ~10min',
+        'Detect duplicate schools in UCAS data only. ~15min',
+        'Detect duplicates in SCL data only. ~15min',
+        'Exit'
+    ]
 
-    if selection == '1': match_schools(ucas_data, scl_data, './configurations/option_one_config.json')
-    elif selection == '2': detect_duplicates(ucas_data, './configurations/option_two_config.json')
-    elif selection == '3': detect_duplicates(scl_data, './configurations/option_three_config.json')
-    else: print('[ERROR] Please run again and select a valid option (1)')
+    main_menu = TerminalMenu(
+        title='',
+        menu_entries=options,
+        menu_cursor='➤ ',
+        menu_cursor_style=('fg_green', 'bold')
+    )
+
+    selection = main_menu.show()
+
+    if selection == 0: match_schools(ucas_data, scl_data, './configurations/option_one_config.json')
+    elif selection == 1: detect_duplicates(ucas_data, './configurations/option_two_config.json')
+    elif selection == 2: detect_duplicates(scl_data, './configurations/option_three_config.json')
+    elif selection == 3: sys.exit(0)
+    else: print('[ERROR] Invaild menu option selected.')
 
 
 def check_data_folder_exists() -> None:
