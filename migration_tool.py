@@ -66,7 +66,7 @@ def run_menu() -> None:
     if selection == 0: match_schools(ucas_data, scl_data, './configurations/option_one_config.json')
     elif selection == 1: detect_duplicates(ucas_data, './configurations/option_two_config.json')
     elif selection == 2: detect_duplicates(scl_data, './configurations/option_three_config.json')
-    elif selection == 3: sys.exit(0)
+    elif selection == 3: pass
     else: print('[ERROR] Invaild menu option selected.')
 
 
