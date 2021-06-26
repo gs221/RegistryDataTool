@@ -14,16 +14,17 @@ def run_menu() -> None:
         - Displays options menu to allow user to select appropriate tool.
     """
 
-    print('------------- Registry UCAS-SCL Migration Tool -------------\n')
+    print('------------- Registry UCAS-SCL Migration Tool -------------')
 
     # Check that the data folder exists, if not create it
     check_data_folder_exists()
 
     # Get and store filepath for each file
-    ucas_path = get_file_path('./data/ucas/', '[TODO] Please put ucas data in ucas folder.\n')
-    scl_path = get_file_path('./data/scl/', '[TODO] Please put scl data in scl folder.\n')
+    ucas_path = get_file_path('./data/ucas/', '\n[TODO] Please put ucas data in ucas folder.\n')
+    scl_path = get_file_path('./data/scl/', '\n[TODO] Please put scl data in scl folder.\n')
 
     # Pre-clean both data files to remove any unwanted characters that may cause issue 
+    print() # Menu Formatting only 
     pre_clean(ucas_path)
     pre_clean(scl_path)
 
