@@ -59,7 +59,7 @@ def csv_to_upper(file_path: str, exclude=[]) -> None:
     error('Could not locate \'' + file_path + '\'. Formatting could not be performed.')
 
   # Print informative message to user
-  info('Formatting ' + file_path + '.', end='')
+  print(coloured('[INFO] ', Fore.GREEN) + 'Formatting ' + file_path + '.', end='')
   
   # If columns have been given to exclude from formatting, print columns
   if exclude:
