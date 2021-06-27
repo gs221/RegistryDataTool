@@ -5,19 +5,21 @@ Contains functions that are frequently used.
 """
 
 import os
+import shutil
 import sys
 import json
-from colorama.ansi import AnsiFore
 
 import pandas as pd
 from pandas import DataFrame
 from colorama import Fore
 from json.decoder import JSONDecodeError
+from colorama.ansi import AnsiFore
+from colorama.initialise import deinit
 
 def pre_clean(f):
   """ Removes any quotation marks from the files to prevent errors during importation. """
 
-  print(coloured('[INFO]', Fore.GREEN) + ' Pre-Cleaning ', f.split('/')[-1], end='')
+  info('Pre-Cleaning ' + f.split('/')[-1], fin='')
 
   f_cleaned = ''
 
@@ -59,7 +61,7 @@ def csv_to_upper(file_path: str, exclude=[]) -> None:
     error('Could not locate \'' + file_path + '\'. Formatting could not be performed.')
 
   # Print informative message to user
-  print(coloured('[INFO] ', Fore.GREEN) + 'Formatting ' + file_path + '.', end='')
+  info('Formatting ' + file_path + '.', fin='')
   
   # If columns have been given to exclude from formatting, print columns
   if exclude:
@@ -83,22 +85,36 @@ def csv_to_upper(file_path: str, exclude=[]) -> None:
   print(' (Finished)')
 
 
-def error(msg: str) -> None:
+def error(msg: str, fin=None, pre='', post='') -> None:
   """ Prints supplied error message and sys.exits(1) """
-  print(coloured('[ERROR] ', Fore.RED) + msg)
-  sys.exit(1)
+  print(coloured(pre + '[ERROR] ', Fore.RED) + msg + post, end=fin)
+  cleanup_and_exit()
 
 
-def todo(msg: str) -> None:
+def todo(msg: str, fin=None, pre='', post='') -> None:
   """ Prints supplied todo message. """
-  print(coloured('[TODO] ', Fore.YELLOW) + msg)
+  print(pre + coloured('[TODO] ', Fore.YELLOW) + msg + post, end=fin)
 
 
-def info(msg: str) -> None:
+def info(msg: str, fin=None, pre='', post='') -> None:
   """ Prints supplied info message. """
-  print(coloured('[INFO] ', Fore.GREEN) + msg)
+  print(pre + coloured('[INFO] ', Fore.GREEN) + msg + post, end=fin)
 
 
 def coloured(string: str, colour: AnsiFore) -> str:
   """ returns string with colour information surrounding. """
   return colour + string + Fore.RESET
+
+
+def cleanup_and_exit() -> None:
+  """ Cleans stuff before exiting. """
+
+  # Disarm colorama
+  deinit()
+
+  # Remove temporary directories 
+  if os.path.exists('./data/training'): shutil.rmtree('./data/training')
+  if os.path.exists('./data/cleaned'): shutil.rmtree('./data/cleaned')
+
+  # Exit program
+  sys.exit(0)

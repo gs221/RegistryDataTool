@@ -7,7 +7,6 @@ This file contains the functions that are used to identify suplicate schools in 
 
 import csv_dedupe
 import os
-import shutil
 
 from pandas import DataFrame
 from csv_dedupe import csv_dedupe
@@ -38,10 +37,6 @@ def detect_duplicates(data: DataFrame, config_path: str) -> None:
   # Find duplicates
   deduper = csv_dedupe.CsvDedupe(configuration)
   deduper.run()
-
-  # Remove cleaned directory as it is no longer required
-  if os.path.exists(cleaned_csv_path):
-    shutil.rmtree(cleaned_csv_path)
 
   # Get path to result file from configuration
   results = configuration.get('results_file', None)

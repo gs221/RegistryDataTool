@@ -6,7 +6,6 @@ Contains functions that match schools accross two csv files.
 """
 
 import os
-import shutil
 
 from pandas.core.frame import DataFrame
 from helpers import csv_to_upper, open_config_file
@@ -32,10 +31,6 @@ def match_schools(ucas: DataFrame, scl: DataFrame, config_path: str) -> None:
   # Find Matches
   linker = csv_link.CsvLink(configuration)
   linker.run()
-
-  # Remove cleaned directory as it is no longer required
-  if os.path.exists(cleaned_csv_path):
-    shutil.rmtree(cleaned_csv_path)
 
   # Get paths to results files from configuration 
   potential_matches = configuration.get('matches_file')

@@ -5,8 +5,8 @@ from colorama.initialise import deinit
 import pandas as pd
 from pandas import DataFrame
 from detect_delimiter import detect
-from colorama import init, Fore
-from helpers import pre_clean, try_again, coloured, info
+from colorama import init
+from helpers import cleanup_and_exit, pre_clean, try_again, info, error, todo
 from school_matcher import match_schools
 from duplicate_detector import detect_duplicates
 
@@ -22,8 +22,8 @@ def run_menu() -> None:
     check_data_folder_exists()
 
     # Get and store filepath for each file
-    ucas_path = get_file_path('./data/ucas/', '\n' + coloured('[TODO] ', Fore.YELLOW) + 'Please put ucas data in ucas folder.\n')
-    scl_path = get_file_path('./data/scl/', '\n' + coloured('[TODO] ', Fore.YELLOW) + 'lease put scl data in scl folder.\n')
+    ucas_path = get_file_path('./data/ucas/', 'Please put ucas data in ucas folder.')
+    scl_path = get_file_path('./data/scl/', 'Please put scl data in scl folder.')
 
     # Pre-clean both data files to remove any unwanted characters that may cause issue 
     print() # Menu Formatting only 
@@ -46,6 +46,9 @@ def run_menu() -> None:
     ucas_data: DataFrame = pd.read_csv(ucas_path, sep=ucas_delimiter, dtype=str, usecols=[i for i in range(30)], keep_default_na=False)    
     scl_data: DataFrame = pd.read_csv(scl_path, sep=internal_delimiter, dtype=str, usecols=[i for i in range(80)], keep_default_na=False)
 
+    # Create directory for training information 
+    if not os.path.exists('./data/training'): os.mkdir('./data/training')
+
     # Menu options
     print('\n1. Find centres with internal ID that now have relevant UCAS ID. ~10min')
     print('2. Detect duplicate schools in UCAS data only. ~15min')
@@ -58,23 +61,27 @@ def run_menu() -> None:
     if selection == '1': match_schools(ucas_data, scl_data, './configurations/option_one_config.json')
     elif selection == '2': detect_duplicates(ucas_data, './configurations/option_two_config.json')
     elif selection == '3': detect_duplicates(scl_data, './configurations/option_three_config.json')
-    elif selection == '4': pass
-    else: print(coloured('[ERROR] ', Fore.RED) + 'Invaild menu option selected.')
+    elif selection == '4': cleanup_and_exit()
+    else: error('Invaild menu option selected', post='\n')
 
 
 def check_data_folder_exists() -> None:
     """ Checks that data folder exists. If it doesnt exist it is created. """
 
-    if not os.path.exists('./data'):
-        print(coloured('[INFO] ', Fore.GREEN) + 'The following folders couldnt be found:\n\t- ./data\n\t- ./data/ucas\n\t- ./data/scl\n\t- ./data/training\nThey will now be created. ', end='')
+    if not os.path.exists('./data'): 
+        info('Couldn\'t find ./data folder. This will now be created.', pre='\n')
         os.mkdir('./data')
+
+    if not os.path.exists('./data/ucas'):
+        info('Couldn\'t find ./data/ucas folder. This will now be created.')
         os.mkdir('./data/ucas')
+
+    if not os.path.exists('./data/scl'):
+        info('Couldn\'t find ./data/scl folder. This will now be created.')
         os.mkdir('./data/scl')
-        os.mkdir('./data/training')
-        print('(Finished)\n')
 
 
-def get_file_path(path: str, err_msg: str) -> list[str]:
+def get_file_path(path: str, msg: str) -> list[str]:
     """ Gets filepath of the first and only file in a folder. User is prompted until the folder contains a single file. """
 
     while True:
@@ -82,7 +89,7 @@ def get_file_path(path: str, err_msg: str) -> list[str]:
         file_missing = len(folder_contents) < 1 or len(folder_contents) > 1
 
         if file_missing:
-            print(err_msg)
+            todo(msg, pre='\n', post='\n')
             try_again()
         else:
             return folder_contents[0]
@@ -99,10 +106,10 @@ def main() -> None:
     except ValueError as e:
         print(e)
     except ZeroDivisionError as e:
-        print(coloured('[ERROR] ', Fore.RED) + 'An attempt was made to divide by zero. This is likely casued by an attempt to proceed without training the program.')
+        error('An attempt was made to divide by zero. This is likely casued by an attempt to proceed without training the program.')
 
-    # Disarm colorama
-    deinit()
+    # Clean up before quitting
+    cleanup_and_exit()
 
 
 # Executes main
