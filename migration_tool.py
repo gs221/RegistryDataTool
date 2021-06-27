@@ -1,6 +1,5 @@
 import glob
 import os
-from colorama.initialise import deinit
 
 import pandas as pd
 from pandas import DataFrame

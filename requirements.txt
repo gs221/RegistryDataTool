@@ -26,3 +26,4 @@ simplecosine==1.2
 six==1.16.0
 zope.index==5.0.0
 zope.interface==5.4.0
+colorama==0.4.4
