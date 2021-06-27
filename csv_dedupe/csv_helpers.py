@@ -129,9 +129,9 @@ def writeLinkedResults(clustered_pairs, input_1, input_2, potential_matches, uca
         NB: Only used in csv_linker.
     """
 
-    info('Saving potential matches to:', potential_matches.name)
-    info('Saving schools that only appeared in ucas data to:', ucas_only.name)
-    info('Saving schools that only appeared in scl data to', scl_only.name)
+    info('Saving potential matches to: ' + potential_matches.name)
+    info('Saving schools that only appeared in ucas data to: ' + ucas_only.name)
+    info('Saving schools that only appeared in scl data to ' + scl_only.name)
 
     matched_records = []
     seen_1 = set()

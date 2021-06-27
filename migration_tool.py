@@ -66,7 +66,7 @@ def check_data_folder_exists() -> None:
     """ Checks that data folder exists. If it doesnt exist it is created. """
 
     if not os.path.exists('./data'):
-        info('The following folders couldnt be found:\n\t- ./data\n\t- ./data/ucas\n\t- ./data/scl\n\t- ./data/training\nThey will now be created. ', end='')
+        print(coloured('[INFO] ', Fore.GREEN) + 'The following folders couldnt be found:\n\t- ./data\n\t- ./data/ucas\n\t- ./data/scl\n\t- ./data/training\nThey will now be created. ', end='')
         os.mkdir('./data')
         os.mkdir('./data/ucas')
         os.mkdir('./data/scl')
