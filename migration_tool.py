@@ -1,10 +1,12 @@
 import glob
 import os
+from colorama.initialise import deinit
 
 import pandas as pd
 from pandas import DataFrame
 from detect_delimiter import detect
-from helpers import pre_clean, try_again
+from colorama import init, Fore
+from helpers import pre_clean, try_again, coloured
 from school_matcher import match_schools
 from duplicate_detector import detect_duplicates
 
@@ -14,14 +16,14 @@ def run_menu() -> None:
         - Displays options menu to allow user to select appropriate tool.
     """
 
-    print('------------- Registry UCAS-SCL Migration Tool -------------')
+    print('--------------- Registry UCAS-SCL Migration Tool ---------------')
 
     # Check that the data folder exists, if not create it
     check_data_folder_exists()
 
     # Get and store filepath for each file
-    ucas_path = get_file_path('./data/ucas/', '\n[TODO] Please put ucas data in ucas folder.\n')
-    scl_path = get_file_path('./data/scl/', '\n[TODO] Please put scl data in scl folder.\n')
+    ucas_path = get_file_path('./data/ucas/', '\n' + coloured('[TODO] ', Fore.YELLOW) + 'Please put ucas data in ucas folder.\n')
+    scl_path = get_file_path('./data/scl/', '\n' + coloured('[TODO] ', Fore.YELLOW) + 'lease put scl data in scl folder.\n')
 
     # Pre-clean both data files to remove any unwanted characters that may cause issue 
     print() # Menu Formatting only 
@@ -57,14 +59,14 @@ def run_menu() -> None:
     elif selection == '2': detect_duplicates(ucas_data, './configurations/option_two_config.json')
     elif selection == '3': detect_duplicates(scl_data, './configurations/option_three_config.json')
     elif selection == '4': pass
-    else: print('[ERROR] Invaild menu option selected.')
+    else: print(coloured('[ERROR] ', Fore.RED) + 'Invaild menu option selected.')
 
 
 def check_data_folder_exists() -> None:
     """ Checks that data folder exists. If it doesnt exist it is created. """
 
     if not os.path.exists('./data'):
-        print('[INFO] The following folders couldnt be found:\n\t- ./data\n\t- ./data/ucas\n\t- ./data/scl\n\t- ./data/training\nThey will now be created. ', end='')
+        print(coloured('[INFO] ', Fore.GREEN) + 'The following folders couldnt be found:\n\t- ./data\n\t- ./data/ucas\n\t- ./data/scl\n\t- ./data/training\nThey will now be created. ', end='')
         os.mkdir('./data')
         os.mkdir('./data/ucas')
         os.mkdir('./data/scl')
@@ -89,12 +91,18 @@ def get_file_path(path: str, err_msg: str) -> list[str]:
 def main() -> None:
     """ The first function that is called in the program. """
 
+    # initialise colorama 
+    init(autoreset=True)
+
     try:
         run_menu()
     except ValueError as e:
         print(e)
     except ZeroDivisionError as e:
-        print('[ERROR] An attempt was made to divide by zero. This is likely casued by an attempt to proceed without training the program.')
+        print(coloured('[ERROR] ', Fore.RED) + 'An attempt was made to divide by zero. This is likely casued by an attempt to proceed without training the program.')
+
+    # Disarm colorama
+    deinit()
 
 
 # Executes main

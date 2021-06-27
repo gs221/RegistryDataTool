@@ -17,7 +17,7 @@ class CsvDedupe(csv_helpers.CsvSetup) :
         try:
             self.input = open(self.configuration['input'], encoding='utf-8').read()
         except IOError:
-            print_err('[ERROR] Could not find input file at ' + self.configuration['input'])
+            print_err('Could not find input file at ' + self.configuration['input'])
 
 
         if self.field_definition is None :
@@ -27,7 +27,7 @@ class CsvDedupe(csv_helpers.CsvSetup) :
                                           'type': 'String'}
                                          for field in self.field_names]
             except KeyError:
-                print_err('[ERROR] You must provide field names in configuration file.')
+                print_err('You must provide field names in configuration file.')
         else :
             self.field_names = [field_def['field'] for field_def in self.field_definition]
 

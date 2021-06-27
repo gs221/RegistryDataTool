@@ -7,16 +7,18 @@ Contains functions that are frequently used.
 import os
 import sys
 import json
+from colorama.ansi import AnsiFore
 
 import pandas as pd
 from pandas import DataFrame
+from colorama import Fore
 
 from json.decoder import JSONDecodeError
 
 def pre_clean(f):
   """ Removes any quotation marks from the files to prevent errors during importation. """
 
-  print('[INFO] Pre-Cleaning ', f.split('/')[-1], end='')
+  print(coloured('[INFO]', Fore.GREEN) + ' Pre-Cleaning ', f.split('/')[-1], end='')
 
   f_cleaned = ''
 
@@ -36,12 +38,10 @@ def open_config_file(config_path: str) -> dict:
     with open(config_path, 'r') as config_file:   
       return json.load(config_file)                
   except FileNotFoundError:
-    print('[ERROR] Could not find configuration file ' + config_path + '.')
-    sys.exit(1)
+    print_err('Could not find configuration file ' + config_path + '.')
   except JSONDecodeError:
-    print('[ERRROR] Could not parse ' + config_path + '. Please ensure it contains only valid JSON.')
-    sys.exit(1)
-
+    print_err('Could not parse ' + config_path + '. Please ensure it contains only valid JSON.')
+    
 
 def try_again() -> None:
     """ Prompts the user to retry some process or exit program """
@@ -57,11 +57,10 @@ def csv_to_upper(file_path: str, exclude=[]) -> None:
 
   # Check that file exists 
   if not os.path.isfile(file_path):
-    print('[ERROR] Could not locate \'' + file_path + '\'. Formatting could not be performed.')
-    sys.exit(1)
+    print_err('Could not locate \'' + file_path + '\'. Formatting could not be performed.')
 
   # Print informative message to user
-  print('[INFO] Formatting ' + file_path + '.', end='')
+  print(coloured('[INFO] ', Fore.GREEN) + 'Formatting ' + file_path + '.', end='')
   
   # If columns have been given to exclude from formatting, print columns
   if exclude:
@@ -87,5 +86,9 @@ def csv_to_upper(file_path: str, exclude=[]) -> None:
 
 def print_err(msg: str) -> None:
   """ Prints supplied error message and sys.exits(1) """
-  print(msg)
+  print(coloured('[ERROR] ', Fore.RED) + msg)
   sys.exit(1)
+
+def coloured(string: str, colour: AnsiFore) -> str:
+  """ returns string with colour information surrounding. """
+  return colour + string + Fore.RESET

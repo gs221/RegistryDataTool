@@ -7,9 +7,9 @@ import platform
 import dedupe
 
 from io import StringIO, open
-
 from dedupe.api import RecordLink
-from helpers import try_again
+from colorama import Fore
+from helpers import coloured
     
 if platform.system() != 'Windows' :
     from signal import signal, SIGPIPE, SIG_DFL
@@ -59,7 +59,7 @@ def writeResults(clustered_dupes, input_file, results_file):
 
     """ Writes original data back out to a CSV with a new column called 'Cluster ID' indicating which records refer to each other. """
 
-    print('[INFO] Saving results to: %s' % results_file)
+    print(coloured('[INFO] ', Fore.Green) + 'Saving results to: %s' % results_file)
 
     cluster_membership = {}
     for cluster_id, (cluster, score) in enumerate(clustered_dupes):
@@ -90,7 +90,7 @@ def writeUniqueResults(clustered_dupes, input_file, results_file):
 
     """ Discards clustered results and prints only unique, unmatched records. """
 
-    print('[INFO] Saving unique results to: %s' % results_file)
+    print(coloured('[INFO] ', Fore.Green) + 'Saving unique results to: %s' % results_file)
 
     cluster_membership = {}
     for cluster_id, (cluster, score) in enumerate(clustered_dupes):
@@ -130,9 +130,9 @@ def writeLinkedResults(clustered_pairs, input_1, input_2, potential_matches, uca
         NB: Only used in csv_linker.
     """
 
-    print('[INFO] Saving potential matches to:', potential_matches.name)
-    print('[INFO] Saving schools that only appeared in ucas data to:', ucas_only.name)
-    print('[INFO] Saving schools that only appeared in scl data to', scl_only.name)
+    print(coloured('[INFO] ', Fore.Green) + 'Saving potential matches to:', potential_matches.name)
+    print(coloured('[INFO] ', Fore.Green) + 'Saving schools that only appeared in ucas data to:', ucas_only.name)
+    print(coloured('[INFO] ', Fore.Green) + 'Saving schools that only appeared in scl data to', scl_only.name)
 
     matched_records = []
     seen_1 = set()

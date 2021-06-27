@@ -24,22 +24,22 @@ class CsvLink(csv_helpers.CsvSetup):
             try:
                 self.input_1 = open(input_one, encoding='utf-8').read()
             except IOError:
-                print_err('[ERROR] Could not find input file at ' + input_one)
+                print_err('Could not find input file at ' + input_one)
 
             try:
                 self.input_2 = open(input_two, encoding='utf-8').read()
             except IOError:
-                print_err('[ERROR] Could not find input file at ' + input_two)
+                print_err('Could not find input file at ' + input_two)
 
         else:
-            print_err('[ERROR] You must supply two input paths in configuration file.')
+            print_err('You must supply two input paths in configuration file.')
 
         # If field names are given correctly in config file
         if 'scl_field_names' in self.configuration and 'ucas_field_names' in self.configuration:
             self.field_names_1 = self.configuration['scl_field_names']
             self.field_names_2 = self.configuration['ucas_field_names']
         else:
-            raise self.parser.error("[ERROR] You must provide scl_field_names and ucas_field_names in configuration file.")
+            print_err("You must provide scl_field_names and ucas_field_names in configuration file.")
 
         self.inner_join = self.configuration.get('inner_join', False)
 
