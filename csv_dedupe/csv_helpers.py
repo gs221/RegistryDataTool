@@ -143,7 +143,7 @@ def writeLinkedResults(clustered_pairs, input_1, input_2, potential_matches, uca
     input_2 = [row for row in csv.reader(StringIO(input_2))]
     row_header_2 = input_2.pop(0)
     
-    all_headers = row_header + row_header_2
+    all_headers = ['Match'] + row_header + row_header_2
 
     for pair in clustered_pairs:
         index_1, index_2 = [int(index.split('|', 1)[1]) for index in pair[0]]
@@ -164,7 +164,7 @@ def writeLinkedResults(clustered_pairs, input_1, input_2, potential_matches, uca
 
     # Write all matches to file 
     for matches in matched_records:
-        match_writer.writerow(matches)
+        match_writer.writerow([''] + matches)
 
     if not inner_join:
 
