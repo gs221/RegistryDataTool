@@ -5,7 +5,7 @@ import dedupe
 
 from io import open
 from . import csv_helpers
-from helpers import print_err
+from helpers import error
 
 
 class CsvDedupe(csv_helpers.CsvSetup) :
@@ -17,7 +17,7 @@ class CsvDedupe(csv_helpers.CsvSetup) :
         try:
             self.input = open(self.configuration['input'], encoding='utf-8').read()
         except IOError:
-            print_err('Could not find input file at ' + self.configuration['input'])
+            error('Could not find input file at ' + self.configuration['input'])
 
 
         if self.field_definition is None :
@@ -27,7 +27,7 @@ class CsvDedupe(csv_helpers.CsvSetup) :
                                           'type': 'String'}
                                          for field in self.field_names]
             except KeyError:
-                print_err('You must provide field names in configuration file.')
+                error('You must provide field names in configuration file.')
         else :
             self.field_names = [field_def['field'] for field_def in self.field_definition]
 
@@ -48,7 +48,7 @@ class CsvDedupe(csv_helpers.CsvSetup) :
         for field in self.field_definition:
             if field['type'] != 'Interaction':
                 if not field['field'] in data_d[0]:
-                    print_err("Could not find field '" + field + "' in input")
+                    error("Could not find field '" + field + "' in input")
 
         logging.info('using fields: %s' % [field['field'] for field in self.field_definition])
 

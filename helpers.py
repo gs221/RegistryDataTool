@@ -12,7 +12,6 @@ from colorama.ansi import AnsiFore
 import pandas as pd
 from pandas import DataFrame
 from colorama import Fore
-
 from json.decoder import JSONDecodeError
 
 def pre_clean(f):
@@ -38,9 +37,9 @@ def open_config_file(config_path: str) -> dict:
     with open(config_path, 'r') as config_file:   
       return json.load(config_file)                
   except FileNotFoundError:
-    print_err('Could not find configuration file ' + config_path + '.')
+    error('Could not find configuration file ' + config_path + '.')
   except JSONDecodeError:
-    print_err('Could not parse ' + config_path + '. Please ensure it contains only valid JSON.')
+    error('Could not parse ' + config_path + '. Please ensure it contains only valid JSON.')
     
 
 def try_again() -> None:
@@ -57,10 +56,10 @@ def csv_to_upper(file_path: str, exclude=[]) -> None:
 
   # Check that file exists 
   if not os.path.isfile(file_path):
-    print_err('Could not locate \'' + file_path + '\'. Formatting could not be performed.')
+    error('Could not locate \'' + file_path + '\'. Formatting could not be performed.')
 
   # Print informative message to user
-  print(coloured('[INFO] ', Fore.GREEN) + 'Formatting ' + file_path + '.', end='')
+  info('Formatting ' + file_path + '.', end='')
   
   # If columns have been given to exclude from formatting, print columns
   if exclude:
@@ -84,10 +83,21 @@ def csv_to_upper(file_path: str, exclude=[]) -> None:
   print(' (Finished)')
 
 
-def print_err(msg: str) -> None:
+def error(msg: str) -> None:
   """ Prints supplied error message and sys.exits(1) """
   print(coloured('[ERROR] ', Fore.RED) + msg)
   sys.exit(1)
+
+
+def todo(msg: str) -> None:
+  """ Prints supplied todo message. """
+  print(coloured('[TODO] ', Fore.YELLOW) + msg)
+
+
+def info(msg: str) -> None:
+  """ Prints supplied info message. """
+  print(coloured('[INFO] ', Fore.GREEN) + msg)
+
 
 def coloured(string: str, colour: AnsiFore) -> str:
   """ returns string with colour information surrounding. """

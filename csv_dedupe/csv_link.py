@@ -6,7 +6,7 @@ import logging
 
 from io import open
 from . import csv_helpers
-from helpers import print_err
+from helpers import error
 
 
 class CsvLink(csv_helpers.CsvSetup):
@@ -24,22 +24,22 @@ class CsvLink(csv_helpers.CsvSetup):
             try:
                 self.input_1 = open(input_one, encoding='utf-8').read()
             except IOError:
-                print_err('Could not find input file at ' + input_one)
+                error('Could not find input file at ' + input_one)
 
             try:
                 self.input_2 = open(input_two, encoding='utf-8').read()
             except IOError:
-                print_err('Could not find input file at ' + input_two)
+                error('Could not find input file at ' + input_two)
 
         else:
-            print_err('You must supply two input paths in configuration file.')
+            error('You must supply two input paths in configuration file.')
 
         # If field names are given correctly in config file
         if 'scl_field_names' in self.configuration and 'ucas_field_names' in self.configuration:
             self.field_names_1 = self.configuration['scl_field_names']
             self.field_names_2 = self.configuration['ucas_field_names']
         else:
-            print_err("You must provide scl_field_names and ucas_field_names in configuration file.")
+            error("You must provide scl_field_names and ucas_field_names in configuration file.")
 
         self.inner_join = self.configuration.get('inner_join', False)
 
@@ -62,11 +62,11 @@ class CsvLink(csv_helpers.CsvSetup):
         # sanity check for provided field names in CSV file
         for field in self.field_names_1:
             if field not in list(data_1.values())[0]:
-                print_err("Could not find field '" + field + "' in input")
+                error("Could not find field '" + field + "' in input")
 
         for field in self.field_names_2:
             if field not in list(data_2.values())[0]:
-                print_err("Could not find field '" + field + "' in input")
+                error("Could not find field '" + field + "' in input")
 
         if self.field_names_1 != self.field_names_2:
             for record_id, record in data_2.items():

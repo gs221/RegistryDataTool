@@ -6,7 +6,7 @@ import pandas as pd
 from pandas import DataFrame
 from detect_delimiter import detect
 from colorama import init, Fore
-from helpers import pre_clean, try_again, coloured
+from helpers import pre_clean, try_again, coloured, info
 from school_matcher import match_schools
 from duplicate_detector import detect_duplicates
 
@@ -66,7 +66,7 @@ def check_data_folder_exists() -> None:
     """ Checks that data folder exists. If it doesnt exist it is created. """
 
     if not os.path.exists('./data'):
-        print(coloured('[INFO] ', Fore.GREEN) + 'The following folders couldnt be found:\n\t- ./data\n\t- ./data/ucas\n\t- ./data/scl\n\t- ./data/training\nThey will now be created. ', end='')
+        info('The following folders couldnt be found:\n\t- ./data\n\t- ./data/ucas\n\t- ./data/scl\n\t- ./data/training\nThey will now be created. ', end='')
         os.mkdir('./data')
         os.mkdir('./data/ucas')
         os.mkdir('./data/scl')

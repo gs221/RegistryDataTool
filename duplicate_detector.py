@@ -11,7 +11,7 @@ import shutil
 
 from pandas import DataFrame
 from csv_dedupe import csv_dedupe
-from helpers import csv_to_upper, open_config_file, print_err
+from helpers import csv_to_upper, open_config_file, error
 
 # Path for cleaned file to be stored 
 cleaned_csv_path = './data/cleaned/'
@@ -27,7 +27,7 @@ def detect_duplicates(data: DataFrame, config_path: str) -> None:
 
   if file_type == 'ucas': cleaned_file_name = 'ucas_for_option2.csv'
   elif file_type == 'scl': cleaned_file_name = 'scl_for_option3.csv'
-  else: print_err('Malformed configuration file.')
+  else: error('Malformed configuration file.')
 
   # Generate clean file from data for dedupe 
   generate_clean_file(data, cleaned_file_name)
