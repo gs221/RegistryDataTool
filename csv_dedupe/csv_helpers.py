@@ -58,7 +58,7 @@ def writeResults(clustered_dupes, input_file, results_file):
 
     """ Writes original data back out to a CSV with a new column called 'Cluster ID' indicating which records refer to each other. """
 
-    info('Saving results to ' + results_file)
+    info('Saving results to ' + results_file.name)
 
     cluster_membership = {}
     for cluster_id, (cluster, score) in enumerate(clustered_dupes):
@@ -89,7 +89,7 @@ def writeUniqueResults(clustered_dupes, input_file, results_file):
 
     """ Discards clustered results and prints only unique, unmatched records. """
 
-    info('Saving unique results to: ' + results_file)
+    info('Saving unique results to: ' + results_file.name)
 
     cluster_membership = {}
     for cluster_id, (cluster, score) in enumerate(clustered_dupes):

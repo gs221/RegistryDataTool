@@ -7,8 +7,7 @@
     "Address line 2",
     "Address line 3",
     "Address line 4",
-    "Postcode", 
-    "UCAS Status"
+    "Postcode"
   ], 
-  "recall_weight": 15
+  "recall_weight": 1
 }
