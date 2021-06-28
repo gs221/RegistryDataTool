@@ -45,9 +45,6 @@ def run_menu() -> None:
     ucas_data: DataFrame = pd.read_csv(ucas_path, sep=ucas_delimiter, dtype=str, usecols=[i for i in range(30)], keep_default_na=False)    
     scl_data: DataFrame = pd.read_csv(scl_path, sep=internal_delimiter, dtype=str, usecols=[i for i in range(80)], keep_default_na=False)
 
-    # Create directory for training information 
-    if not os.path.exists('./data/training'): os.mkdir('./data/training')
-
     # Menu options
     print('\n1. Find centres with internal ID that now have relevant UCAS ID. ~10min')
     print('2. Detect duplicate schools in UCAS data only. ~15min')

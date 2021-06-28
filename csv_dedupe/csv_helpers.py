@@ -237,6 +237,9 @@ class CsvSetup(object) :
 
         deduper.train()
 
+        # Create directory for training information 
+        if not os.path.exists('./data/training'): os.mkdir('./data/training')
+
         # After training settings have been established make a cache file for reuse
         logging.info('Caching training result set to file %s' % self.settings_file)
         with open(self.settings_file, 'wb') as sf:
