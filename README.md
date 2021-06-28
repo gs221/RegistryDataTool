@@ -7,7 +7,7 @@ Tool created for the University of St Andrews Academic Registry to aid in the im
 - Detect duplicate schools in UCAS data only. 
 - Detect duplicates in SCL data only. 
 
-## Installation
+## Prerequisites and Installation
 Clone repository:
 ```
 git clone https://github.com/gs221/SCL-Tool.git
@@ -21,7 +21,8 @@ Navigate to the SCL-Tool folder and install required packages:
 pip install -r requirements.txt
 ```
 
-
-
 ## Licensing 
 [Csvdedupe](https://github.com/dedupeio/csvdedupe#copyright-and-attribution) - Copyright © 2016 DataMade. Released under MIT License.
+
+## Contact 
+- Gregor: gregor@gscs.uk
