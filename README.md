@@ -19,4 +19,4 @@ pip install -r requirements.txt
 
 
 ## Licensing 
-[Csvdedupe](https://github.com/dedupeio/csvdedupe) - Copyright © 2016 DataMade. Released under MIT License.
+[Csvdedupe](https://github.com/dedupeio/csvdedupe#copyright-and-attribution) - Copyright © 2016 DataMade. Released under MIT License.
