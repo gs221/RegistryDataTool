@@ -143,7 +143,7 @@ class CsvLink(csv_helpers.CsvSetup):
             write_function(clustered_dupes, self.input_1, self.input_2, sys.stdout, self.inner_join)
 
 
-def exact_matches(data_1, data_2, match_fields) -> tuple[dict, dict, dict]:
+def exact_matches(data_1, data_2, match_fields):
     """ Identifies exact and non-exact matches between datasets. """
 
     nonexact_1 = {}
