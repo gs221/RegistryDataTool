@@ -42,8 +42,19 @@ def run_menu() -> None:
     scl_file.close()
 
     # Stores file contents present in ucas and scl folders into data frames
-    ucas_data: DataFrame = pd.read_csv(ucas_path, sep=ucas_delimiter, dtype=str, usecols=[i for i in range(30)], keep_default_na=False)    
-    scl_data: DataFrame = pd.read_csv(scl_path, sep=internal_delimiter, dtype=str, usecols=[i for i in range(80)], keep_default_na=False)
+    ucas_data: DataFrame = pd.read_csv(ucas_path, 
+                                       sep=ucas_delimiter, 
+                                       dtype=str, 
+                                       usecols=[i for i in range(30)], 
+                                       keep_default_na=False, 
+                                       encoding='iso-8859-15')   
+
+    scl_data: DataFrame = pd.read_csv(scl_path, 
+                                      sep=internal_delimiter, 
+                                      dtype=str, 
+                                      usecols=[i for i in range(80)], 
+                                      keep_default_na=False, 
+                                      encoding='iso-8859-15')
 
     # Menu options
     print('\n1. Find centres with internal ID that now have relevant UCAS ID. ~10min')
