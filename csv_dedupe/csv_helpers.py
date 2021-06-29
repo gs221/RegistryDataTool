@@ -214,6 +214,9 @@ class CsvSetup(object) :
     def dedupe_training(self, deduper: RecordLink) -> None:
         """ Loads existing training data, or starts manual training process. """
 
+        # Create directory for training information 
+        if not os.path.exists('./data/training'): os.mkdir('./data/training')
+
         if os.path.exists(self.training_file):
             logging.info('Reading labeled examples from %s' % self.training_file)
             with open(self.training_file) as tf:
@@ -236,9 +239,6 @@ class CsvSetup(object) :
             logging.info('Skipping the training step')
 
         deduper.train()
-
-        # Create directory for training information 
-        if not os.path.exists('./data/training'): os.mkdir('./data/training')
 
         # After training settings have been established make a cache file for reuse
         logging.info('Caching training result set to file %s' % self.settings_file)
