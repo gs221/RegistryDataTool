@@ -18,10 +18,10 @@ cleaned_csv_path = './data/cleaned/'
 def detect_duplicates(data: DataFrame, config_path: str) -> None:
   """ Detects duplicates in a singe csv file. """
 
-  # Open and store configuration information from supplied file. 
+  # Open and store configuration information from supplied file path. 
   configuration = open_config_file(config_path)
 
-  # Generate input filename based on selection
+  # Get file type. This is used to distinguish between ucas and scl data. This allows for appropriate formatting. 
   file_type = configuration.get('file_type', None)
 
   if file_type == 'ucas': cleaned_file_name = 'ucas_for_option2.csv'
@@ -31,7 +31,7 @@ def detect_duplicates(data: DataFrame, config_path: str) -> None:
   # Generate clean file from data for dedupe 
   generate_clean_file(data, cleaned_file_name)
 
-  # Add input file path to configuration
+  # Add input file path to configuration, this is used by csv_dedupe.py to determin the input filename. 
   configuration['input'] = cleaned_csv_path + cleaned_file_name
 
   # Find duplicates

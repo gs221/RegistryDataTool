@@ -15,7 +15,7 @@ class CsvLink(csv_helpers.CsvSetup):
 
         """ Following initialisation, sets up input files and fields for linker. """
 
-        # If two input files are given in config file 
+        # If two input files are present in configuration.  
         if len(self.configuration['input']) == 2:
 
             input_one = self.configuration['input'][0]

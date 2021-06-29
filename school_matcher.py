@@ -19,16 +19,17 @@ scl_cleaned = 'scl_for_option1.csv'
 def match_schools(ucas: DataFrame, scl: DataFrame, config_path: str) -> None:
   """ Matches schools that are in two csv files. """
 
-  # Generate files for linker 
+  # Generate files for linker, using these files prevents any decoding errors. 
   generate_clean_files(ucas, scl)
 
   # Open and store configuration information from supplied file. 
   configuration = open_config_file(config_path)
 
-  # Add input file paths to configuration
+  # Add input file paths to configuration, this is used by csv_link.py to determine the two input filenames. 
   configuration['input'] = [cleaned_csv_path + scl_cleaned, cleaned_csv_path + ucas_cleaned]
 
   # Find Matches
+  # Creates instance of and runs the linker program with the given configuration 
   linker = csv_link.CsvLink(configuration)
   linker.run()
 
@@ -56,7 +57,8 @@ def generate_clean_files(ucas: DataFrame, scl: DataFrame) -> None:
   if not os.path.exists(cleaned_csv_path):
       os.mkdir(cleaned_csv_path)
 
-  # Generate files and place in directory
+  # Generate clean files and place in directory
+  # Index is set to false to prevent pandas from writiting the ID's it has given to each row. 
   removed_common.to_csv(cleaned_csv_path + ucas_cleaned, index=False)
   without_ucas.to_csv(cleaned_csv_path + scl_cleaned, index=False)
 

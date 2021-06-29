@@ -1,7 +1,7 @@
 """
 File Helpers: 
 
-Contains functions that are frequently used. 
+Contains helpful functions that are frequently used. 
 """
 
 import os
@@ -19,15 +19,15 @@ from colorama.initialise import deinit
 def pre_clean(f):
   """ Removes any quotation marks from the files to prevent errors during importation. """
 
-  info('Pre-Cleaning ' + f.split('/')[-1], fin='')
+  info('Pre-Cleaning ' + f.split('/')[-1], fin='')    # Prints info message and gets filename from file path. 
 
-  f_cleaned = ''
+  f_cleaned = ''                                     
 
-  with open(f, 'r', encoding='iso-8859-15') as file:
-    f_cleaned = file.read().replace('"', '')
+  with open(f, 'r', encoding='iso-8859-15') as file:  # Opens file with appropriate encoding (for read) 
+    f_cleaned = file.read().replace('"', '')          # Replaces all quotation marks with nothing
 
-  with open(f, 'w', encoding='iso-8859-15') as file:
-    file.write(f_cleaned)
+  with open(f, 'w', encoding='iso-8859-15') as file:  # Opens file with appropriate encoding (for write)
+    file.write(f_cleaned)                             # Writes cleaned file to file
 
   print(' (Finished)')
 
@@ -36,11 +36,16 @@ def open_config_file(config_path: str) -> dict:
   """ Attempts to open and parse the supplied configuration file. Returns dictionary containing configuration. """
 
   try: 
+    # Tries to read and parse configuration file from given path.
     with open(config_path, 'r') as config_file:   
       return json.load(config_file)                
+
   except FileNotFoundError:
+    # If the file could not be found, print  meaningful error message. 
     error('Could not find configuration file ' + config_path + '.')
+
   except JSONDecodeError:
+    # if the file could not be parsed (contains invalid JSON) then pring error message. 
     error('Could not parse ' + config_path + '. Please ensure it contains only valid JSON.')
     
 
