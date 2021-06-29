@@ -122,5 +122,5 @@ def cleanup_and_exit() -> None:
   if os.path.exists('./data/cleaned'): shutil.rmtree('./data/cleaned')
 
   # Exit program
-  input('Press enter ↵ to exit ')
+  input('Press enter to exit ')
   sys.exit(0)
