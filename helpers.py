@@ -111,7 +111,7 @@ def coloured(string: str, colour: AnsiFore) -> str:
   return colour + string + Fore.RESET
 
 
-def cleanup_and_exit() -> None:
+def cleanup_and_exit(prompt=True) -> None:
   """ Cleans stuff before exiting. """
 
   # Disarm colorama
@@ -122,5 +122,5 @@ def cleanup_and_exit() -> None:
   if os.path.exists('./data/cleaned'): shutil.rmtree('./data/cleaned')
 
   # Exit program
-  input('Press enter to exit ')
+  if prompt: input('Press enter to exit ')
   sys.exit(0)

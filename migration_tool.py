@@ -69,7 +69,7 @@ def run_menu() -> None:
     if selection == '1': match_schools(ucas_data, scl_data, './configurations/option_one_config.json')
     elif selection == '2': detect_duplicates(ucas_data, './configurations/option_two_config.json')
     elif selection == '3': detect_duplicates(scl_data, './configurations/option_three_config.json')
-    elif selection == '4': cleanup_and_exit()
+    elif selection == '4': cleanup_and_exit(prompt=False)
     else: error('Invaild menu option selected', post='\n')
 
 
