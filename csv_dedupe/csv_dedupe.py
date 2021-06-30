@@ -8,10 +8,10 @@ from . import csv_helpers
 from helpers import error
 
 
-class CsvDedupe(csv_helpers.CsvSetup) :
+class CsvDedupe(csv_helpers.CsvSetup):
     def __init__(self, configuration: dict):
         super(CsvDedupe, self).__init__(configuration)
-        
+
         """ Following initialisation, sets up input file and fields for deduper. """
 
         try:
@@ -19,8 +19,7 @@ class CsvDedupe(csv_helpers.CsvSetup) :
         except IOError:
             error('Could not find input file at ' + self.configuration['input'])
 
-
-        if self.field_definition is None :
+        if self.field_definition is None:
             try:
                 self.field_names = self.configuration['field_names']
                 self.field_definition = [{'field': field,
@@ -28,16 +27,13 @@ class CsvDedupe(csv_helpers.CsvSetup) :
                                          for field in self.field_names]
             except KeyError:
                 error('You must provide field names in configuration file.')
-        else :
+        else:
             self.field_names = [field_def['field'] for field_def in self.field_definition]
 
         self.destructive = self.configuration.get('destructive', False)
 
-
     def run(self):
         """ Runs the deduper program. """
-
-        data_d = {}
 
         # import the specified CSV file
         data_d = csv_helpers.readData(self.input, self.field_names, delimiter=self.delimiter)
@@ -48,7 +44,7 @@ class CsvDedupe(csv_helpers.CsvSetup) :
         for field in self.field_definition:
             if field['type'] != 'Interaction':
                 if not field['field'] in data_d[0]:
-                    error("Could not find field '" + field + "' in input")
+                    error("Could not find field '" + str(field) + "' in input")
 
         logging.info('using fields: %s' % [field['field'] for field in self.field_definition])
 
@@ -61,7 +57,7 @@ class CsvDedupe(csv_helpers.CsvSetup) :
 
             fields = {variable.field for variable in deduper.data_model.primary_fields}
             unique_d, parents = exact_matches(data_d, fields)
-                
+
         else:
             # # Create a new deduper object and pass our data model to it.
             deduper = dedupe.Dedupe(self.field_definition)
@@ -111,16 +107,17 @@ class CsvDedupe(csv_helpers.CsvSetup) :
 
         logging.info('# duplicate sets %s' % len(clustered_dupes))
 
-        write_function = csv_helpers.writeResults
+        write_function = csv_helpers.write_results
         # write out our results
         if self.destructive:
-            write_function = csv_helpers.writeUniqueResults
+            write_function = csv_helpers.write_unique_results
 
         if self.results_file:
             with open(self.results_file, 'w', encoding='utf-8') as results_file:
                 write_function(clustered_dupes, self.input, results_file)
         else:
             write_function(clustered_dupes, self.input, sys.stdout)
+
 
 def exact_matches(data_d, match_fields):
     unique = {}
@@ -133,5 +130,4 @@ def exact_matches(data_d, match_fields):
         else:
             redundant[record_hash][1].append(key)
 
-    return unique, {k : v for k, v in redundant.values()}
-
+    return unique, {k: v for k, v in redundant.values()}

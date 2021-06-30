@@ -10,6 +10,7 @@ from school_matcher import match_schools
 from duplicate_detector import detect_duplicates
 from helpers import cleanup_and_exit, pre_clean, try_again, info, error, todo
 
+
 def run_menu() -> None:
     """ - Verifies that required folders and documents are available.
         - Cleans and imports documents as they are used by all menu options.
@@ -26,7 +27,7 @@ def run_menu() -> None:
     scl_path = get_file_path('./data/scl/', 'Please put scl data in scl folder. This folder must contain a single data file.')
 
     # Pre-clean both data files to remove any unwanted characters that may cause issue 
-    print() # Menu Formatting only 
+    print()  # Menu Formatting only
     pre_clean(ucas_path)
     pre_clean(scl_path)
 
@@ -43,22 +44,22 @@ def run_menu() -> None:
     scl_file.close()
 
     # Stores file contents present in ucas and scl folders into data frames
-    ucas_data: DataFrame = pd.read_csv(ucas_path,                        
-                                       sep=ucas_delimiter,              
+    ucas_data: DataFrame = pd.read_csv(ucas_path,
+                                       sep=ucas_delimiter,
                                        dtype=str,                       # All column types set to string to prevent type errors.
-                                       usecols=[i for i in range(30)],  # Ucas data only has 30 columns so only import that many, the rest are garbage. 
+                                       usecols=[i for i in range(30)],  # Ucas data only has 30 columns so only import that many, the rest are garbage.
                                        keep_default_na=False,           # Prevents Pandas from filling empty cells with NaN.
-                                       encoding='iso-8859-15')          # Prevents decoding error when importing the data. 
+                                       encoding='iso-8859-15')          # Prevents decoding error when importing the data.
 
-    scl_data: DataFrame = pd.read_csv(scl_path, 
-                                      sep=internal_delimiter, 
-                                      dtype=str,                        # All column types set to string to prevent type errors. 
-                                      usecols=[i for i in range(80)],   # Scl data consists of 80 columns only, the rest are garbage and should not be imported. 
+    scl_data: DataFrame = pd.read_csv(scl_path,
+                                      sep=internal_delimiter,
+                                      dtype=str,                        # All column types set to string to prevent type errors.
+                                      usecols=[i for i in range(80)],   # Scl data consists of 80 columns only, the rest are garbage and should not be imported.
                                       keep_default_na=False,            # Prevents pandas from filling empty cells with NaN (not a number).
-                                      encoding='iso-8859-15')           # Set encoding to prevent decoding error due to nafarious characters. 
+                                      encoding='iso-8859-15')           # Set encoding to prevent decoding error due to nefarious characters.
 
     # Menu options
-    print('\n1. Find centres with internal ID that now have relevant UCAS ID. ', end='~10min\n' if system() != 'Windows' else '~20min\n') 
+    print('\n1. Find centres with internal ID that now have relevant UCAS ID. ', end='~10min\n' if system() != 'Windows' else '~20min\n')
     print('2. Detect duplicate schools in UCAS data only. ', end='~15min\n' if system() != 'Windows' else '~60min\n')
     print('3. Detect duplicates in SCL data only. ', end='~15min\n' if system() != 'Windows' else '~60min\n')
     print('4. Exit')
@@ -71,13 +72,13 @@ def run_menu() -> None:
     elif selection == '2': detect_duplicates(ucas_data, './configurations/option_two_config.json')
     elif selection == '3': detect_duplicates(scl_data, './configurations/option_three_config.json')
     elif selection == '4': cleanup_and_exit(prompt=False)
-    else: error('Invaild menu option selected', post='\n')
+    else: error('Invalid menu option selected', post='\n')
 
 
 def check_data_folders() -> None:
     """ Checks that data folder exists. If it doesnt exist it is created. """
 
-    if not os.path.exists('./data'): 
+    if not os.path.exists('./data'):
         info('Couldn\'t find ./data folder. This will now be created.', pre='\n')
         os.mkdir('./data')
 
@@ -94,14 +95,14 @@ def get_file_path(path: str, msg: str):
     """ Gets filepath of the first and only file in a folder. User is prompted until the folder contains a single file. """
 
     while True:
-        folder_contents = glob.glob(os.path.join(path, '*.*'))                  # Searches for any file name * with any extension * in the given path. 
-        file_missing = len(folder_contents) < 1 or len(folder_contents) > 1     # True when folder contains single file. False otherwise. 
+        folder_contents = glob.glob(os.path.join(path, '*.*'))                  # Searches for any file name * with any extension * in the given path.
+        file_missing = len(folder_contents) < 1 or len(folder_contents) > 1     # True when folder contains single file. False otherwise.
 
         if file_missing:                    # If the file is missing (or there is more than one file)
             todo(msg, pre='\n', post='\n')  # Print todo message to prompt user to insert file into folder.
             try_again()                     # Gets user to enter 't' to try again, or 'e' to exit the program.
         else:
-            return folder_contents[0]       # [0] refers to first element of list of folder contents. This is the path to the one and only file in the folder. 
+            return folder_contents[0]       # [0] refers to first element of list of folder contents. This is the path to the one and only file in the folder.
 
 
 def main() -> None:
@@ -121,11 +122,11 @@ def main() -> None:
     except ZeroDivisionError as e:
         # If zero division error is raised, catch it and print error message. 
         # If this happens it is likely caused by an attempt to skip training (entering finish immediately)
-        error('An attempt was made to divide by zero. This is likely casued by an attempt to proceed without training the program.')
+        error('An attempt was made to divide by zero. This is likely caused by an attempt to proceed without training the program.')
 
     except Exception:
         # If all else fails, print exception. 
-        error('An unexpected error occured.', post='\n')
+        error('An unexpected error occurred.', post='\n')
 
     # Clean up before quitting
     cleanup_and_exit()

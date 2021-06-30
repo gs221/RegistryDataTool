@@ -8,15 +8,14 @@ import platform
 
 from helpers import info
 from io import StringIO, open
-from dedupe.api import RecordLink
 
-    
-if platform.system() != 'Windows' :
+if platform.system() != 'Windows':
     from signal import signal, SIGPIPE, SIG_DFL
+
     signal(SIGPIPE, SIG_DFL)
 
 
-def preProcess(column):
+def pre_process(column):
     """
     Do a little bit of data cleaning. Things like casing, extra spaces, 
     quotes and new lines are ignored.
@@ -24,8 +23,8 @@ def preProcess(column):
     column = re.sub('  +', ' ', column)
     column = re.sub('\n', ' ', column)
     column = column.strip().strip('"').strip("'").lower().strip()
-    
-    if column == '' :
+
+    if column == '':
         column = None
     return column
 
@@ -42,10 +41,10 @@ def readData(input_file, field_names, delimiter=',', prefix=None) -> dict:
     """
 
     data = {}
-    
-    reader = csv.DictReader(StringIO(input_file),delimiter=delimiter)
+
+    reader = csv.DictReader(StringIO(input_file), delimiter=delimiter)
     for i, row in enumerate(reader):
-        clean_row = {k: preProcess(v) for (k, v) in row.items() if k is not None}
+        clean_row = {k: pre_process(v) for (k, v) in row.items() if k is not None}
         if prefix:
             row_id = u"%s|%s" % (prefix, i)
         else:
@@ -55,8 +54,7 @@ def readData(input_file, field_names, delimiter=',', prefix=None) -> dict:
     return data
 
 
-def writeResults(clustered_dupes, input_file, results_file):
-
+def write_results(clustered_dupes, input_file, results_file):
     """ Writes original data back out to a CSV with a new column called 'Cluster ID' indicating which records refer to each other. """
 
     info('Saving results to ' + results_file.name)
@@ -86,8 +84,7 @@ def writeResults(clustered_dupes, input_file, results_file):
         writer.writerow(row)
 
 
-def writeUniqueResults(clustered_dupes, input_file, results_file):
-
+def write_unique_results(clustered_dupes, input_file, results_file):
     """ Discards clustered results and prints only unique, unmatched records. """
 
     info('Saving unique results to: ' + results_file.name)
@@ -122,7 +119,8 @@ def writeUniqueResults(clustered_dupes, input_file, results_file):
             writer.writerow(row)
 
 
-def writeLinkedResults(clustered_pairs, input_1, input_2, potential_matches, ucas_only, scl_only , inner_join=False) -> None:
+def write_linked_results(clustered_pairs, input_1, input_2, potential_matches, ucas_only, scl_only,
+                         inner_join=False) -> None:
     """ Writes results when two csv files are being searched for duplicates. 
         - Potential matches: written to a file with combined headers. 
         - Records unique to scl: written to a file with specified name.
@@ -143,7 +141,7 @@ def writeLinkedResults(clustered_pairs, input_1, input_2, potential_matches, uca
 
     input_2 = [row for row in csv.reader(StringIO(input_2))]
     row_header_2 = input_2.pop(0)
-    
+
     all_headers = ['Match'] + row_header + row_header_2
 
     for pair in clustered_pairs:
@@ -180,9 +178,9 @@ def writeLinkedResults(clustered_pairs, input_1, input_2, potential_matches, uca
                 ucas_writer.writerow(row)
 
 
-class CsvSetup(object) :
-    def __init__(self, configuration: dict) -> None :
-        """ Initialises configuration information for the CSVCommand class. """ 
+class CsvSetup(object):
+    def __init__(self, configuration: dict) -> None:
+        """ Initialises configuration information for the CSVCommand class. """
 
         # Initialise configuration 
         self.configuration = configuration
@@ -196,23 +194,22 @@ class CsvSetup(object) :
         self.settings_file = self.configuration.get('settings_file', './data/training/cached_settings')
         self.sample_size = self.configuration.get('sample_size', 1500)
         self.recall_weight = self.configuration.get('recall_weight', 1)
-        self.delimiter = self.configuration.get('delimiter',',')
+        self.delimiter = self.configuration.get('delimiter', ',')
 
         # Determine whether or not program should skip training
-        self.skip_training = False # Always false to make program simpler, users must always train AI
+        self.skip_training = False  # Always false to make program simpler, users must always train AI
 
         # Must use this method as 'field definition' is itself a dictionary 
         if 'field_definition' in self.configuration:
             self.field_definition = self.configuration['field_definition']
-        else :
+        else:
             self.field_definition = None
 
         # Delete existing training data should any be present
         if os.path.exists(self.training_file): os.remove(self.training_file)
         if os.path.exists(self.settings_file): os.remove(self.settings_file)
 
-
-    def dedupe_training(self, deduper: RecordLink) -> None:
+    def dedupe_training(self, deduper) -> None:
         """ Loads existing training data, or starts manual training process. """
 
         # Create directory for training information 
@@ -230,10 +227,10 @@ class CsvSetup(object) :
 
             # When finished, save our training away to disk
             logging.info('Saving training data to %s' % self.training_file)
-            if sys.version < '3' :
+            if sys.version < '3':
                 with open(self.training_file, 'wb') as tf:
                     deduper.writeTraining(tf)
-            else :
+            else:
                 with open(self.training_file, 'w') as tf:
                     deduper.writeTraining(tf)
         else:

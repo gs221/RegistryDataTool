@@ -1,6 +1,4 @@
-
 import os
-import sys
 import dedupe
 import logging
 
@@ -43,18 +41,14 @@ class CsvLink(csv_helpers.CsvSetup):
 
         self.inner_join = self.configuration.get('inner_join', False)
 
-        if self.field_definition is None :
+        if self.field_definition is None:
             self.field_definition = [{'field': field,
                                       'type': 'String'}
                                      for field in self.field_names_1]
 
-
     def run(self) -> None:
         """ Runs the linking program. """
 
-        data_1 = {}
-        data_2 = {}
-        
         # Read configured csv files
         data_1 = csv_helpers.readData(self.input_1, self.field_names_1, delimiter=self.delimiter, prefix='input_1')
         data_2 = csv_helpers.readData(self.input_2, self.field_names_2, delimiter=self.delimiter, prefix='input_2')
@@ -72,7 +66,7 @@ class CsvLink(csv_helpers.CsvSetup):
             for record_id, record in data_2.items():
                 remapped_record = {}
                 for new_field, old_field in zip(self.field_names_1, self.field_names_2):
-                    remapped_record[new_field] = record[old_field] 
+                    remapped_record[new_field] = record[old_field]
                     data_2[record_id] = remapped_record
 
         logging.info('imported %d rows from file 1', len(data_1))
@@ -86,10 +80,10 @@ class CsvLink(csv_helpers.CsvSetup):
             logging.info('reading from previous training cache %s' % self.settings_file)
             with open(self.settings_file, 'rb') as f:
                 deduper = dedupe.StaticRecordLink(f)
-                
+
             fields = {variable.field for variable in deduper.data_model.primary_fields}
             (nonexact_1, nonexact_2, exact_pairs) = exact_matches(data_1, data_2, fields)
-            
+
         else:
             # Create a new deduper object and pass our data model to it.
             deduper = dedupe.RecordLink(self.field_definition)
@@ -129,22 +123,17 @@ class CsvLink(csv_helpers.CsvSetup):
 
         logging.info('# duplicate sets %s' % len(clustered_dupes))
 
-        write_function = csv_helpers.writeLinkedResults
-        
+        write_function = csv_helpers.write_linked_results
+
         # write out our results
-        if self.potential_matches and self.ucas_only and self.scl_only:
-            if sys.version < '3' :
-                with open(self.potential_matches, 'wb', encoding='utf-8') as pm, open(self.scl_only, 'wb', encoding='utf-8') as scl, open(self.ucas_only, 'wb', encoding='utf-8') as ucas:
-                    write_function(clustered_dupes, self.input_1, self.input_2, pm, ucas, scl, self.inner_join)
-            else :
-                with open(self.potential_matches, 'w', encoding='utf-8') as pm, open(self.scl_only, 'w', encoding='utf-8') as scl, open(self.ucas_only, 'w', encoding='utf-8') as ucas:
-                    write_function(clustered_dupes, self.input_1, self.input_2, pm, ucas, scl, self.inner_join)
-        else:
-            write_function(clustered_dupes, self.input_1, self.input_2, sys.stdout, self.inner_join)
+        with open(self.potential_matches, 'w', encoding='utf-8') as pm, \
+                open(self.scl_only, 'w', encoding='utf-8') as scl, \
+                open(self.ucas_only, 'w', encoding='utf-8') as ucas:
+            write_function(clustered_dupes, self.input_1, self.input_2, pm, ucas, scl, self.inner_join)
 
 
 def exact_matches(data_1, data_2, match_fields):
-    """ Identifies exact and non-exact matches between datasets. """
+    """ Identifies exact and non-exact matches between data sets. """
 
     nonexact_1 = {}
     nonexact_2 = {}
@@ -153,7 +142,7 @@ def exact_matches(data_1, data_2, match_fields):
 
     for key, record in data_1.items():
         record_hash = hash(tuple(record[f] for f in match_fields))
-        redundant[record_hash] = key        
+        redundant[record_hash] = key
 
     for key_2, record in data_2.items():
         record_hash = hash(tuple(record[f] for f in match_fields))
@@ -166,6 +155,5 @@ def exact_matches(data_1, data_2, match_fields):
 
     for key_1 in redundant.values():
         nonexact_1[key_1] = data_1[key_1]
-        
-    return nonexact_1, nonexact_2, exact_pairs
 
+    return nonexact_1, nonexact_2, exact_pairs
