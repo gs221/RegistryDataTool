@@ -1,14 +1,15 @@
 import os
 import re
 import csv
-import logging
 import sys
-import platform
 import dedupe
+import logging
+import platform
 
+from helpers import info
 from io import StringIO, open
 from dedupe.api import RecordLink
-from helpers import info
+
     
 if platform.system() != 'Windows' :
     from signal import signal, SIGPIPE, SIG_DFL

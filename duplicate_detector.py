@@ -5,8 +5,8 @@ This file contains the functions that are used to identify suplicate schools in 
 
 """
 
-import csv_dedupe
 import os
+import csv_dedupe
 
 from pandas import DataFrame
 from csv_dedupe import csv_dedupe

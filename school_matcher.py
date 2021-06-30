@@ -7,9 +7,9 @@ Contains functions that match schools accross two csv files.
 
 import os
 
+from csv_dedupe import csv_link
 from pandas.core.frame import DataFrame
 from helpers import csv_to_upper, open_config_file
-from csv_dedupe import csv_link
 
 # Filepaths and filenames
 cleaned_csv_path = './data/cleaned/'

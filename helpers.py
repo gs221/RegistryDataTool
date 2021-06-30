@@ -5,16 +5,17 @@ Contains helpful functions that are frequently used.
 """
 
 import os
-import shutil
 import sys
 import json
+import shutil
 
 import pandas as pd
-from pandas import DataFrame
 from colorama import Fore
-from json.decoder import JSONDecodeError
+from pandas import DataFrame
 from colorama.ansi import AnsiFore
 from colorama.initialise import deinit
+from json.decoder import JSONDecodeError
+
 
 def pre_clean(f):
   """ Removes any quotation marks from the files to prevent errors during importation. """

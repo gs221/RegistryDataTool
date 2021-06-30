@@ -1,7 +1,7 @@
 import os
 import sys
-import logging
 import dedupe
+import logging
 
 from io import open
 from . import csv_helpers

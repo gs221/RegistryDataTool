@@ -1,13 +1,14 @@
-import glob
 import os
+import glob
 
 import pandas as pd
+from colorama import init
+from platform import system
 from pandas import DataFrame
 from detect_delimiter import detect
-from colorama import init
-from helpers import cleanup_and_exit, pre_clean, try_again, info, error, todo
 from school_matcher import match_schools
 from duplicate_detector import detect_duplicates
+from helpers import cleanup_and_exit, pre_clean, try_again, info, error, todo
 
 def run_menu() -> None:
     """ - Verifies that required folders and documents are available.
@@ -57,9 +58,9 @@ def run_menu() -> None:
                                       encoding='iso-8859-15')           # Set encoding to prevent decoding error due to nafarious characters. 
 
     # Menu options
-    print('\n1. Find centres with internal ID that now have relevant UCAS ID. ~10min')
-    print('2. Detect duplicate schools in UCAS data only. ~15min')
-    print('3. Detect duplicates in SCL data only. ~15min')
+    print('\n1. Find centres with internal ID that now have relevant UCAS ID. ', end='~10min\n' if system() != 'Windows' else '~20min\n') 
+    print('2. Detect duplicate schools in UCAS data only. ', end='~15min\n' if system() != 'Windows' else '~60min\n')
+    print('3. Detect duplicates in SCL data only. ', end='~15min\n' if system() != 'Windows' else '~60min\n')
     print('4. Exit')
     print()
     selection = input("Please enter selection number: ")
