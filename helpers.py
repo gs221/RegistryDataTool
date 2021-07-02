@@ -1,17 +1,20 @@
 """
 File Helpers: 
 
-Contains helpful functions that are frequently used. 
+Contains helpful functions that are frequently used across multiple files. 
 """
 
 import os
 import sys
 import json
+import glob
 import shutil
 
 import pandas as pd
 from colorama import Fore
+from platform import system
 from pandas import DataFrame
+from menu import SingleSelectionMenu
 from colorama.initialise import deinit
 from json.decoder import JSONDecodeError
 
@@ -30,21 +33,40 @@ def pre_clean(f):
     print(' (Finished)')
 
 
-def open_config_file(config_path: str) -> dict:
+def open_config_file(default_config: str, path='./configurations/') -> dict:
     """ Attempts to open and parse the supplied configuration file. Returns dictionary containing configuration. """
 
     try:
-        # Tries to read and parse configuration file from given path.
-        with open(config_path, 'r') as config_file:
-            return json.load(config_file)
+        if default_config is not None and os.path.exists(path + default_config):
+            # Tries to read and parse default configuration file from given path.
+            with open(path + default_config, 'r') as config_file:
+                return json.load(config_file)
+        else:
+            # Otherwise informs the user that default config file could not be found.
+            info('Please select a configuration file from the list below.', pre='\n', post='\n')
+
+            # Gets a list of .config files in path 
+            config_files = glob.glob(os.path.join(path, '*.config'))
+
+            # If there is less than one configuration file in the path, print error. 
+            if len(config_files) < 1: 
+                error('Couldnt find any configuration files. Ensure they are in the configuration folder and have extension .config.')
+
+            # Generates menu consisting of discovered config files.
+            config_menu = SingleSelectionMenu(options=config_files)
+
+            # Attempts to parse and return user selected configuration 
+            # -1 as list index starts at 0 but menu selections start at 1. 
+            with open(config_files[config_menu.show() - 1], 'r') as config_file:
+                return json.load(config_file)
 
     except FileNotFoundError:
         # If the file could not be found, print  meaningful error message.
-        error('Could not find configuration file ' + config_path + '.')
+        error('Could not find configuration file.')
 
     except JSONDecodeError:
         # if the file could not be parsed (contains invalid JSON) then print error message.
-        error('Could not parse ' + config_path + '. Please ensure it contains only valid JSON.')
+        error('Could not parse selected configuration file. Please ensure it contains only valid JSON.')
 
 
 def try_again() -> None:
@@ -117,8 +139,35 @@ def cleanup_and_exit(prompt=True) -> None:
 
     # Remove temporary directories
     if os.path.exists('./data/training'): shutil.rmtree('./data/training')
-    if os.path.exists('./data/cleaned'): shutil.rmtree('./data/cleaned')
+    if os.path.exists('./data/tmp'): shutil.rmtree('./data/tmp')
 
     # Exit program
     if prompt: input('Press enter to exit ')
     sys.exit(0)
+
+
+def time_estimate(win='', other='', all='') -> str:
+    """ Returns string time estimate based on current operating system. win(dows) or otherwise. """
+
+    # If all is set reurn estimate regardless of system type.
+    if all != '': return '~' + all + 'min'
+
+    # If system is windows, return estimate for windows only. 
+    if system() == 'Windows': return '~' + win + 'min'
+
+    # Otherwise return estimate for other system types. 
+    return '~' + other + 'min'
+
+
+def get_file_path(path: str, msg: str) -> str:
+    """ Gets filepath of the first and only file in a folder. User is prompted until the folder contains a single file. """
+
+    while True:
+        folder_contents = glob.glob(os.path.join(path, '*.*'))                  # Searches for any file name * with any extension * in the given path.
+        file_missing = len(folder_contents) < 1 or len(folder_contents) > 1     # True when folder contains single file. False otherwise.
+
+        if file_missing:                    # If the file is missing (or there is more than one file)
+            todo(msg, pre='\n', post='\n')  # Print todo message to prompt user to insert file into folder.
+            try_again()                     # Gets user to enter 't' to try again, or 'e' to exit the program.
+        else:
+            return folder_contents[0]       # [0] refers to first element of list of folder contents. This is the path to the one and only file in the folder.

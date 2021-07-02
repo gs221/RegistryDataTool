@@ -8,48 +8,62 @@ This file contains the functions that are used to identify duplicate schools in 
 import os
 import csv_dedupe
 
+import pandas as pd
 from pandas import DataFrame
 from csv_dedupe import csv_dedupe
-from helpers import csv_to_upper, open_config_file, error
+from detect_delimiter import detect
+from helpers import open_config_file, get_file_path, pre_clean
 
 # Path for cleaned file to be stored 
-cleaned_csv_path = './data/cleaned/'
+cleaned_csv_path = './data/tmp/'
 
 
-def detect_duplicates(data: DataFrame, config_path: str) -> None:
+def detect_duplicates() -> None:
     """ Detects duplicates in a singe csv file. """
 
-    # Open and store configuration information from supplied file path.
-    configuration = open_config_file(config_path)
+    # Open and store configuration information from user selection
+    configuration = open_config_file(None)
 
-    # Get file type. This is used to distinguish between ucas and scl data. This allows for appropriate formatting.
-    file_type = configuration.get('file_type', None)
+    # Get folder path for file
+    folder_path = configuration.get('folder_path')
 
-    cleaned_file_name = ''
+    # Search in folder for file
+    file_path = get_file_path(folder_path, 'Please put data in' + folder_path + 'folder. This folder must contain a single data file.')
 
-    if file_type == 'ucas':
-        cleaned_file_name = 'ucas_for_option2.csv'
-    elif file_type == 'scl':
-        cleaned_file_name = 'scl_for_option3.csv'
-    else:
-        error('Malformed configuration file.')
+    # Pre-clean data file to remove any unwanted characters that may cause issue 
+    print()  # Menu Formatting only
+    if configuration.get('pre_clean', True):
+         pre_clean(file_path)
+
+    # Open and store each file using filepath
+    file = open(file_path, encoding='iso-8859-15')
+
+    # Auto-detect delimiters being used in files
+    file_delimiter = detect(file.readline())
+
+    # Close open files as they are no longer required 
+    file.close()
+
+    # Get number of columns to be considered for each dataset
+    columns = configuration.get('number_of_columns', None)
+
+    # Stores file contents present in ucas and scl folders into data frames
+    data: DataFrame = pd.read_csv(file_path,
+                                  sep=file_delimiter,
+                                  dtype=str,                            # All column types set to string to prevent type errors.
+                                  usecols=[i for i in range(columns)],  # Only import set number of columns
+                                  keep_default_na=False,                # Prevents Pandas from filling empty cells with NaN.
+                                  encoding='iso-8859-15')               # Prevents decoding error when importing the data.
 
     # Generate clean file from data for dedupe
-    generate_clean_file(data, cleaned_file_name)
+    generate_clean_file(data, 'option_two_temp.csv')
 
     # Add input file path to configuration, this is used by csv_dedupe.py to determine the input filename.
-    configuration['input'] = cleaned_csv_path + cleaned_file_name
+    configuration['input'] = cleaned_csv_path + 'option_two_temp.csv'
 
     # Find duplicates
     deduper = csv_dedupe.CsvDedupe(configuration)
     deduper.run()
-
-    # Get path to result file from configuration
-    results = configuration.get('results_file', None)
-
-    # Format results to uppercase, excluding set columns
-    if file_type == 'ucas': csv_to_upper(results)
-    if file_type == 'scl': csv_to_upper(results, exclude=['Fax number', 'Email address'])
 
 
 def generate_clean_file(data: DataFrame, cleaned_file_name: str):

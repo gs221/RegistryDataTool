@@ -7,24 +7,66 @@ Contains functions that match schools across two csv files.
 
 import os
 
+import pandas as pd
 from csv_dedupe import csv_link
+from detect_delimiter import detect
 from pandas.core.frame import DataFrame
-from helpers import csv_to_upper, open_config_file
+from helpers import csv_to_upper, open_config_file, get_file_path, pre_clean
 
 # File paths and filenames
-cleaned_csv_path = './data/cleaned/'
+cleaned_csv_path = './data/tmp/'
 ucas_cleaned = 'ucas_for_option1.csv'
 scl_cleaned = 'scl_for_option1.csv'
 
 
-def match_schools(ucas: DataFrame, scl: DataFrame, config_path: str) -> None:
+def match_schools() -> None:
     """ Matches schools that are in two csv files. """
 
-    # Generate files for linker, using these files prevents any decoding errors.
-    generate_clean_files(ucas, scl)
+    # Get and store filepath for each file
+    ucas_path = get_file_path('./data/ucas/', 'Please put ucas data in ucas folder. This folder must contain a single data file.')
+    scl_path = get_file_path('./data/scl/', 'Please put scl data in scl folder. This folder must contain a single data file.')
+
+    # Pre-clean both data files to remove any unwanted characters that may cause issue 
+    print()  # Menu Formatting only
+    pre_clean(ucas_path)
+    pre_clean(scl_path)
+
+    # Open and store each file using filepath
+    ucas_file = open(ucas_path)
+    scl_file = open(scl_path)
+
+    # Auto-detect delimiters being used in files
+    ucas_delimiter = detect(ucas_file.readline())
+    internal_delimiter = detect(scl_file.readline())
+
+    # Close open files as they are no longer required 
+    ucas_file.close()
+    scl_file.close()
 
     # Open and store configuration information from supplied file.
-    configuration = open_config_file(config_path)
+    configuration = open_config_file('internal_to_ucas.config')
+
+    # Get number of columns to be considered for each dataset
+    scl_columns = configuration.get('number_of_scl_columns', None)
+    ucas_columns = configuration.get('number_of_ucas_columns', None)
+
+    # Stores file contents present in ucas and scl folders into data frames
+    ucas_data: DataFrame = pd.read_csv(ucas_path,
+                                       sep=ucas_delimiter,
+                                       dtype=str,                                   # All column types set to string to prevent type errors.
+                                       usecols=[i for i in range(ucas_columns)],    # Only import set number of columns
+                                       keep_default_na=False,                       # Prevents Pandas from filling empty cells with NaN.
+                                       encoding='iso-8859-15')                      # Prevents decoding error when importing the data.
+
+    scl_data: DataFrame = pd.read_csv(scl_path,
+                                      sep=internal_delimiter,
+                                      dtype=str,                                    # All column types set to string to prevent type errors.
+                                      usecols=[i for i in range(scl_columns)],      # Only import set number of columns
+                                      keep_default_na=False,                        # Prevents pandas from filling empty cells with NaN (not a number).
+                                      encoding='iso-8859-15')                       # Set encoding to prevent decoding error due to nefarious characters.
+
+    # Generate files for linker, using these files prevents any decoding errors.
+    generate_clean_files(ucas_data, scl_data)
 
     # Add input file paths to configuration, this is used by csv_link.py to determine the two input filenames.
     configuration['input'] = [cleaned_csv_path + scl_cleaned, cleaned_csv_path + ucas_cleaned]
