@@ -14,6 +14,7 @@ import pandas as pd
 from colorama import Fore
 from platform import system
 from pandas import DataFrame
+from detect_delimiter import detect
 from menu import SingleSelectionMenu
 from colorama.initialise import deinit
 from json.decoder import JSONDecodeError
@@ -171,3 +172,13 @@ def get_file_path(path: str, msg: str) -> str:
             try_again()                     # Gets user to enter 't' to try again, or 'e' to exit the program.
         else:
             return folder_contents[0]       # [0] refers to first element of list of folder contents. This is the path to the one and only file in the folder.
+
+def get_delimiter(file_path:str, enc=None) -> str:
+    """ Opens, reads and closes a file automatically detecting the delimiter being used. """
+
+    if enc is not None:
+        with open(file_path, encoding=enc) as file:
+            return detect(file.readline())
+    else:
+        with open(file_path) as file:
+            return detect(file.readline())

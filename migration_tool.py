@@ -64,25 +64,25 @@ def main() -> None:
     # Initialise colorama, this facilitates [INFO] and [ERROR] messages being different colours. 
     init(autoreset=True)
 
-    #try:
+    try:
         # Attempt to run program menu. 
-    run_menu()
+        run_menu()
 
-    # except ValueError as e:
-    #     # If value error is raised, catch it and print error message. 
-    #     print(e)
+    except ValueError as e:
+        # If value error is raised, catch it and print error message. 
+        print(e)
 
-    # except TypeError: 
-    #     error('Invalid configuration selected.')
+    except TypeError: 
+        error('Invalid configuration selected.')
 
-    # except ZeroDivisionError as e:
-    #     # If zero division error is raised, catch it and print error message. 
-    #     # If this happens it is likely caused by an attempt to skip training (entering finish immediately)
-    #     error('An attempt was made to divide by zero. This is likely caused by an attempt to proceed without training the program.')
+    except ZeroDivisionError as e:
+        # If zero division error is raised, catch it and print error message. 
+        # If this happens it is likely caused by an attempt to skip training (entering finish immediately)
+        error('An attempt was made to divide by zero. This is likely caused by an attempt to proceed without training the program.')
 
-    # except Exception:
-    #     # If all else fails, print exception. 
-    #     error('An unexpected error occurred.', post='\n')
+    except Exception:
+        # If all else fails, print exception. 
+        error('An unexpected error occurred.', post='\n')
 
     # Clean up before quitting
     cleanup_and_exit()

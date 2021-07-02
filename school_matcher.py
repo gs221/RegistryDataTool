@@ -9,9 +9,8 @@ import os
 
 import pandas as pd
 from csv_dedupe import csv_link
-from detect_delimiter import detect
 from pandas.core.frame import DataFrame
-from helpers import csv_to_upper, open_config_file, get_file_path, pre_clean
+from helpers import csv_to_upper, get_delimiter, open_config_file, get_file_path, pre_clean
 
 # File paths and filenames
 cleaned_csv_path = './data/tmp/'
@@ -31,20 +30,15 @@ def match_schools() -> None:
     pre_clean(ucas_path)
     pre_clean(scl_path)
 
-    # Open and store each file using filepath
-    ucas_file = open(ucas_path)
-    scl_file = open(scl_path)
-
-    # Auto-detect delimiters being used in files
-    ucas_delimiter = detect(ucas_file.readline())
-    internal_delimiter = detect(scl_file.readline())
-
-    # Close open files as they are no longer required 
-    ucas_file.close()
-    scl_file.close()
-
     # Open and store configuration information from supplied file.
     configuration = open_config_file('internal_to_ucas.config')
+
+    # Get encoding used by file (specified in config, defaults to iso-8859-15)
+    file_encoding = configuration.get('file_encoding', 'iso-8859-15')
+
+    # Auto-detect delimiters being used in files
+    ucas_delimiter = get_delimiter(ucas_path, enc=file_encoding)
+    internal_delimiter = get_delimiter(scl_path, enc=file_encoding)
 
     # Get number of columns to be considered for each dataset
     scl_columns = configuration.get('number_of_scl_columns', None)
@@ -56,14 +50,14 @@ def match_schools() -> None:
                                        dtype=str,                                   # All column types set to string to prevent type errors.
                                        usecols=[i for i in range(ucas_columns)],    # Only import set number of columns
                                        keep_default_na=False,                       # Prevents Pandas from filling empty cells with NaN.
-                                       encoding='iso-8859-15')                      # Prevents decoding error when importing the data.
+                                       encoding=file_encoding)                      # Prevents decoding error when importing the data.
 
     scl_data: DataFrame = pd.read_csv(scl_path,
                                       sep=internal_delimiter,
                                       dtype=str,                                    # All column types set to string to prevent type errors.
                                       usecols=[i for i in range(scl_columns)],      # Only import set number of columns
                                       keep_default_na=False,                        # Prevents pandas from filling empty cells with NaN (not a number).
-                                      encoding='iso-8859-15')                       # Set encoding to prevent decoding error due to nefarious characters.
+                                      encoding=file_encoding)                       # Set encoding to prevent decoding error due to nefarious characters.
 
     # Generate files for linker, using these files prevents any decoding errors.
     generate_clean_files(ucas_data, scl_data)

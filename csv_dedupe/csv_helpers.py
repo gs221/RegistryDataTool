@@ -180,7 +180,7 @@ def write_linked_results(clustered_pairs, input_1, input_2, potential_matches, u
 
 class CsvSetup(object):
     def __init__(self, configuration: dict) -> None:
-        """ Initialises configuration information for the CSVCommand class. """
+        """ Initialises configuration information for the CsvSetup class. """
 
         # Initialise configuration 
         self.configuration = configuration

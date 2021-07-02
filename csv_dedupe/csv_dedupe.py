@@ -32,6 +32,7 @@ class CsvDedupe(csv_helpers.CsvSetup):
 
         self.destructive = self.configuration.get('destructive', False)
 
+
     def run(self):
         """ Runs the deduper program. """
 

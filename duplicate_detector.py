@@ -11,8 +11,7 @@ import csv_dedupe
 import pandas as pd
 from pandas import DataFrame
 from csv_dedupe import csv_dedupe
-from detect_delimiter import detect
-from helpers import open_config_file, get_file_path, pre_clean
+from helpers import get_delimiter, open_config_file, get_file_path, pre_clean
 
 # Path for cleaned file to be stored 
 cleaned_csv_path = './data/tmp/'
@@ -35,14 +34,11 @@ def detect_duplicates() -> None:
     if configuration.get('pre_clean', True):
          pre_clean(file_path)
 
-    # Open and store each file using filepath
-    file = open(file_path, encoding='iso-8859-15')
+    # Get encoding used by file (specified in config, defaults to iso-8859-15)
+    file_encoding = configuration.get('file_encoding', 'iso-8859-15')
 
     # Auto-detect delimiters being used in files
-    file_delimiter = detect(file.readline())
-
-    # Close open files as they are no longer required 
-    file.close()
+    file_delimiter = get_delimiter(file_path, enc=file_encoding)
 
     # Get number of columns to be considered for each dataset
     columns = configuration.get('number_of_columns', None)
@@ -53,7 +49,7 @@ def detect_duplicates() -> None:
                                   dtype=str,                            # All column types set to string to prevent type errors.
                                   usecols=[i for i in range(columns)],  # Only import set number of columns
                                   keep_default_na=False,                # Prevents Pandas from filling empty cells with NaN.
-                                  encoding='iso-8859-15')               # Prevents decoding error when importing the data.
+                                  encoding=file_encoding)               # Prevents decoding error when importing the data.
 
     # Generate clean file from data for dedupe
     generate_clean_file(data, 'option_two_temp.csv')
