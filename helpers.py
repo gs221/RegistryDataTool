@@ -20,7 +20,7 @@ from colorama.initialise import deinit
 from json.decoder import JSONDecodeError
 
 
-def pre_clean(f):
+def pre_clean(f) -> None:
     """ Removes any quotation marks from the files to prevent errors during importation. """
 
     info('Pre-Cleaning ' + f.split('/')[-1], fin='')  # Prints info message and gets filename from file path.
@@ -34,7 +34,7 @@ def pre_clean(f):
     print(' (Finished)')
 
 
-def open_config_file(default_config: str, path='./configurations/') -> dict:
+def open_config_file(default_config, path='./configurations/') -> dict:
     """ Attempts to open and parse the supplied configuration file. Returns dictionary containing configuration. """
 
     try:
@@ -79,7 +79,7 @@ def try_again() -> None:
         if value == 'e': sys.exit(0)
 
 
-def csv_to_upper(file_path: str, exclude=[]) -> None:
+def csv_to_upper(file_path: str, exclude=None) -> None:
     """ Converts every column to uppercase in given file excluding column names set to exclude. """
 
     # Check that file exists
@@ -90,7 +90,7 @@ def csv_to_upper(file_path: str, exclude=[]) -> None:
     info('Formatting ' + file_path + '.', fin='')
 
     # If columns have been given to exclude from formatting, print columns
-    if exclude:
+    if exclude is not None:
         print(' Excluding columns: ', end='')
         print(*exclude, sep=', ', end='')
         print('.', end='')
@@ -102,8 +102,9 @@ def csv_to_upper(file_path: str, exclude=[]) -> None:
     file_data = file_data.apply(lambda x: x.str.upper())
 
     # Convert excluded columns back to lowercase
-    for column in exclude:
-        file_data[column] = file_data[column].str.lower()
+    if exclude is not None:
+        for column in exclude:
+            file_data[column] = file_data[column].str.lower()
 
     # Write formatted tables to file
     file_data.to_csv(file_path, index=False)
@@ -139,25 +140,29 @@ def cleanup_and_exit(prompt=True) -> None:
     deinit()
 
     # Remove temporary directories
-    if os.path.exists('./data/training'): shutil.rmtree('./data/training')
-    if os.path.exists('./data/tmp'): shutil.rmtree('./data/tmp')
+    if os.path.exists('./data/training'):
+        shutil.rmtree('./data/training')
+    if os.path.exists('./data/tmp'):
+        shutil.rmtree('./data/tmp')
 
     # Exit program
     if prompt: input('Press enter to exit ')
     sys.exit(0)
 
 
-def time_estimate(win='', other='', all='') -> str:
-    """ Returns string time estimate based on current operating system. win(dows) or otherwise. """
+def time_estimate(windows='', other_os='', all_os='') -> str:
+    """ Returns string time estimate based on current operating system. windowss or otherwise. """
 
     # If all is set reurn estimate regardless of system type.
-    if all != '': return '~' + all + 'min'
+    if all_os != '':
+        return '~' + all_os + 'min'
 
     # If system is windows, return estimate for windows only. 
-    if system() == 'Windows': return '~' + win + 'min'
+    if system() == 'Windows': 
+        return '~' + windows + 'min'
 
     # Otherwise return estimate for other system types. 
-    return '~' + other + 'min'
+    return '~' + other_os + 'min'
 
 
 def get_file_path(path: str, msg: str) -> str:
@@ -172,6 +177,7 @@ def get_file_path(path: str, msg: str) -> str:
             try_again()                     # Gets user to enter 't' to try again, or 'e' to exit the program.
         else:
             return folder_contents[0]       # [0] refers to first element of list of folder contents. This is the path to the one and only file in the folder.
+
 
 def get_delimiter(file_path:str, enc=None) -> str:
     """ Opens, reads and closes a file automatically detecting the delimiter being used. """

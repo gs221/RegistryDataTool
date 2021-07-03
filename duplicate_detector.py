@@ -32,7 +32,7 @@ def detect_duplicates() -> None:
     # Pre-clean data file to remove any unwanted characters that may cause issue 
     print()  # Menu Formatting only
     if configuration.get('pre_clean', True):
-         pre_clean(file_path)
+        pre_clean(file_path)
 
     # Get encoding used by file (specified in config, defaults to iso-8859-15)
     file_encoding = configuration.get('file_encoding', 'iso-8859-15')

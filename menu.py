@@ -1,10 +1,14 @@
 class SingleSelectionMenu:
     """ Contains options to allow a menu to be created from which a single option can be selected. """
 
-    def __init__(self, title=None, options=[]) -> None:
+    def __init__(self, title=None, options=None) -> None:
         """ Inintialises menu with optional title and options. These can be added here or with the respective functions. """
         self.title = title
-        self.options = options
+        
+        if options == None:
+            self.options = []
+        else:
+            self.options = options
 
     def add_title(self, title: str) -> None:
         """ Sets or adds menu title. """
@@ -19,13 +23,16 @@ class SingleSelectionMenu:
 
         # If there are no options for menu and attempt is made to show menu, show error. 
         from helpers import error
-        if len(self.options) < 1: error('Menu must have at least one option.')
+        if len(self.options) < 1: 
+            error('Menu must have at least one option.')
 
         # Print menu title if one exists.
-        if self.title is not None: print(self.title)
+        if self.title is not None: 
+            print(self.title)
 
         # Run run_before function if one is given 
-        if run_before is not None: run_before()
+        if run_before is not None: 
+            run_before()
 
         # Print menu options with number next to each.
         for number, option in enumerate(self.options, 1):

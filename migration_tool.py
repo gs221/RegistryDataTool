@@ -19,9 +19,9 @@ def run_menu() -> None:
     check_data_folders()
 
     # Menu options
-    print('1. Find centres with internal ID that now have relevant UCAS ID. ' + time_estimate(win='10', other='20'))
-    print('2. Detect duplicates within a single file. ' + time_estimate(win='15', other='60'))
-    print('3. Verify links in Org data. ' + time_estimate(all='1'))
+    print('1. Find centres with internal ID that now have relevant UCAS ID. ' + time_estimate(windows='10', other_os='20'))
+    print('2. Detect duplicates within a single file. ' + time_estimate(windows='15', other_os='60'))
+    print('3. Verify links in Org data. ' + time_estimate(all_os='1'))
     print('4. Exit')
     print()
     selection = input("Please enter selection [1-4]: ")

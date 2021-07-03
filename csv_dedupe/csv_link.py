@@ -50,8 +50,8 @@ class CsvLink(csv_helpers.CsvSetup):
         """ Runs the linking program. """
 
         # Read configured csv files
-        data_1 = csv_helpers.readData(self.input_1, self.field_names_1, delimiter=self.delimiter, prefix='input_1')
-        data_2 = csv_helpers.readData(self.input_2, self.field_names_2, delimiter=self.delimiter, prefix='input_2')
+        data_1 = csv_helpers.readData(self.input_1, delimiter=self.delimiter, prefix='input_1')
+        data_2 = csv_helpers.readData(self.input_2, delimiter=self.delimiter, prefix='input_2')
 
         # sanity check for provided field names in CSV file
         for field in self.field_names_1:

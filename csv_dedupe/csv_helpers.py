@@ -29,7 +29,7 @@ def pre_process(column):
     return column
 
 
-def readData(input_file, field_names, delimiter=',', prefix=None) -> dict:
+def readData(input_file, delimiter=',', prefix=None) -> dict:
     """
     Read in our data from a CSV file and create a dictionary of records, 
     where the key is a unique record ID and each value is a dict 
@@ -206,14 +206,17 @@ class CsvSetup(object):
             self.field_definition = None
 
         # Delete existing training data should any be present
-        if os.path.exists(self.training_file): os.remove(self.training_file)
-        if os.path.exists(self.settings_file): os.remove(self.settings_file)
+        if os.path.exists(self.training_file):
+            os.remove(self.training_file)
+        if os.path.exists(self.settings_file):
+            os.remove(self.settings_file)
 
     def dedupe_training(self, deduper) -> None:
         """ Loads existing training data, or starts manual training process. """
 
         # Create directory for training information 
-        if not os.path.exists('./data/training'): os.mkdir('./data/training')
+        if not os.path.exists('./data/training'):
+            os.mkdir('./data/training')
 
         if os.path.exists(self.training_file):
             logging.info('Reading labeled examples from %s' % self.training_file)

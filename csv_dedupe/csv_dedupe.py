@@ -32,12 +32,11 @@ class CsvDedupe(csv_helpers.CsvSetup):
 
         self.destructive = self.configuration.get('destructive', False)
 
-
     def run(self):
         """ Runs the deduper program. """
 
         # import the specified CSV file
-        data_d = csv_helpers.readData(self.input, self.field_names, delimiter=self.delimiter)
+        data_d = csv_helpers.readData(self.input, delimiter=self.delimiter)
 
         logging.info('imported %d rows', len(data_d))
 
