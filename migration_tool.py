@@ -27,10 +27,14 @@ def run_menu() -> None:
     selection = input("Please enter selection [1-4]: ")
 
     # Run operation based on user selection 
-    if selection == '1': match_schools()
-    elif selection == '2': detect_duplicates()
-    elif selection == '3': check_links()
-    elif selection == '4': cleanup_and_exit(prompt=False)
+    if selection == '1': 
+        match_schools()
+    elif selection == '2': 
+        detect_duplicates()
+    elif selection == '3': 
+        check_links()
+    elif selection == '4': 
+        cleanup_and_exit(prompt=False)
     else: error('Invalid menu option selected', post='\n')
 
 
@@ -39,10 +43,14 @@ def check_data_folders() -> None:
 
     print_line = False
 
-    if check_folder('./data'): print_line = True; 
-    if check_folder('./data/ucas'): print_line = True; 
-    if check_folder('./data/scl'): print_line = True; 
-    if check_folder('./data/org'): print_line = True; 
+    if check_folder('./data'): 
+        print_line = True; 
+    if check_folder('./data/ucas'): 
+        print_line = True; 
+    if check_folder('./data/scl'): 
+        print_line = True; 
+    if check_folder('./data/org'): 
+        print_line = True; 
     
     if print_line: print()
 
