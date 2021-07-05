@@ -8,12 +8,14 @@ import platform
 
 from helpers import info
 from io import StringIO, open
+from configuration_manager import DATA_PATH
 
 if platform.system() != 'Windows':
     from signal import signal, SIGPIPE, SIG_DFL
 
     signal(SIGPIPE, SIG_DFL)
 
+TRAINING_PATH = 'training/'
 
 def pre_process(column):
     """
@@ -179,31 +181,28 @@ def write_linked_results(clustered_pairs, input_1, input_2, potential_matches, u
 
 
 class CsvSetup(object):
-    def __init__(self, configuration: dict) -> None:
+    def __init__(self, conf_a) -> None:
         """ Initialises configuration information for the CsvSetup class. """
 
-        # Initialise configuration 
-        self.configuration = configuration
+        # File names for record matcher 
+        self.potential_matches = 'potential_matches.csv'
+        self.a_only = 'a_only.csv'
+        self.b_only = 'b_only.csv'
 
-        # Set values from config file, or use defaults
-        self.potential_matches = self.configuration.get('matches_file', None)
-        self.ucas_only = self.configuration.get('ucas_only_file', None)
-        self.scl_only = self.configuration.get('scl_only_file', None)
-        self.results_file = self.configuration.get('results_file', None)
-        self.training_file = self.configuration.get('training_file', './data/training/training.json')
-        self.settings_file = self.configuration.get('settings_file', './data/training/cached_settings')
-        self.sample_size = self.configuration.get('sample_size', 1500)
-        self.recall_weight = self.configuration.get('recall_weight', 1)
-        self.delimiter = self.configuration.get('delimiter', ',')
+        # File name for duplicate detector
+        self.results_file = 'potential_duplicates.csv'
 
-        # Determine whether or not program should skip training
+        # Training files
+        self.training_file = DATA_PATH + TRAINING_PATH + 'training.json'
+        self.settings_file = DATA_PATH + TRAINING_PATH + 'cached_settings'
+
+        # Set recall weight from config 
+        self.recall_weight = conf_a.recall_weight
+
+        # Dedupe Settings. These are only configurable here.
+        self.sample_size = 1500
+        self.delimiter = ','
         self.skip_training = False  # Always false to make program simpler, users must always train AI
-
-        # Must use this method as 'field definition' is itself a dictionary 
-        if 'field_definition' in self.configuration:
-            self.field_definition = self.configuration['field_definition']
-        else:
-            self.field_definition = None
 
         # Delete existing training data should any be present
         if os.path.exists(self.training_file):

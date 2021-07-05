@@ -8,43 +8,36 @@ from helpers import error
 
 
 class CsvLink(csv_helpers.CsvSetup):
-    def __init__(self, configuration: dict):
-        super(CsvLink, self).__init__(configuration)
+    def __init__(self, conf_a, conf_b):
+        super(CsvLink, self).__init__(conf_a)
 
         """ Following initialisation, sets up input files and fields for linker. """
 
-        # If two input files are present in configuration.  
-        if len(self.configuration['input']) == 2:
+        from record_matcher import TEMP_PATH
+        from configuration_manager import DATA_PATH
 
-            input_one = self.configuration['input'][0]
-            input_two = self.configuration['input'][1]
+        input_one = DATA_PATH + TEMP_PATH + 'temp_a.csv'
+        input_two = DATA_PATH + TEMP_PATH + 'temp_b.csv'
 
-            try:
-                self.input_1 = open(input_one, encoding='utf-8').read()
-            except IOError:
-                error('Could not find input file at ' + input_one)
+        try:
+            self.input_1 = open(input_one, encoding='utf-8').read()
+        except IOError:
+            error('Could not find input file at ' + input_one)
 
-            try:
-                self.input_2 = open(input_two, encoding='utf-8').read()
-            except IOError:
-                error('Could not find input file at ' + input_two)
+        try:
+            self.input_2 = open(input_two, encoding='utf-8').read()
+        except IOError:
+            error('Could not find input file at ' + input_two)
 
-        else:
-            error('You must supply two input paths in configuration file.')
 
-        # If field names are given correctly in config file
-        if 'scl_field_names' in self.configuration and 'ucas_field_names' in self.configuration:
-            self.field_names_1 = self.configuration['scl_field_names']
-            self.field_names_2 = self.configuration['ucas_field_names']
-        else:
-            error("You must provide scl_field_names and ucas_field_names in configuration file.")
+        # Set field names from configuration files
+        self.field_names_1 = conf_a.column_names
+        self.field_names_2 = conf_b.column_names
+        
+        # Dedupe settings. Not modifiable via config
+        self.inner_join = False
+        self.field_definition = [{'field': field, 'type': 'String'} for field in self.field_names_1]
 
-        self.inner_join = self.configuration.get('inner_join', False)
-
-        if self.field_definition is None:
-            self.field_definition = [{'field': field,
-                                      'type': 'String'}
-                                     for field in self.field_names_1]
 
     def run(self) -> None:
         """ Runs the linking program. """
@@ -127,8 +120,8 @@ class CsvLink(csv_helpers.CsvSetup):
 
         # write out our results
         with open(self.potential_matches, 'w', encoding='utf-8') as pm, \
-                open(self.scl_only, 'w', encoding='utf-8') as scl, \
-                open(self.ucas_only, 'w', encoding='utf-8') as ucas:
+                open(self.a_only, 'w', encoding='utf-8') as scl, \
+                open(self.b_only, 'w', encoding='utf-8') as ucas:
             write_function(clustered_dupes, self.input_1, self.input_2, pm, ucas, scl, self.inner_join)
 
 

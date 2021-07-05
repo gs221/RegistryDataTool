@@ -11,7 +11,7 @@ import csv_dedupe
 import pandas as pd
 from pandas import DataFrame
 from csv_dedupe import csv_dedupe
-from helpers import get_delimiter, open_config_file, get_file_path, pre_clean
+from helpers import get_delimiter, open_config, get_file_path, pre_clean
 
 # Path for cleaned file to be stored 
 cleaned_csv_path = './data/tmp/'
@@ -21,7 +21,7 @@ def detect_duplicates() -> None:
     """ Detects duplicates in a singe csv file. """
 
     # Open and store configuration information from user selection
-    configuration = open_config_file(None)
+    configuration = open_config()
 
     # Get folder path for file
     folder_path = configuration.get('folder_path')

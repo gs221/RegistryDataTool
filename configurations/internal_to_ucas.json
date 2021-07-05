@@ -1,0 +1,24 @@
+{
+  "number_of_scl_columns": 80,
+  "scl_field_names": [
+    "Full name",
+    "Address Line 1",
+    "Address Line 2",
+    "Address Line 3",
+    "Address Line 4",
+    "Postcode"
+  ],
+  "number_of_ucas_columns": 30,
+  "ucas_field_names": [
+    "School Name",
+    "Address line 1",
+    "Address line 2",
+    "Address line 3",
+    "Address line 4",
+    "Postcode"
+  ],
+  "matches_file": "potential_matches.csv",
+  "ucas_only_file": "ucas_only.csv",
+  "scl_only_file": "scl_only.csv",
+  "recall_weight": 15
+}
