@@ -10,14 +10,15 @@ import glob
 import shutil
 
 import pandas as pd
-from colorama import Fore, Back
 from platform import system
 from pandas import DataFrame
+from colorama import Fore, Back
+from settings import CONFIG_PATH
 from detect_delimiter import detect
 from menu import SingleSelectionMenu
 from colorama.initialise import deinit
 from json.decoder import JSONDecodeError
-from configuration_manager import CONFIG_PATH, Configuration
+from configuration_manager import Configuration
 
 def pre_clean(file_path, encoding, to_remove) -> None:
     """ Removes given characters from the file to prevent errors during importation. """

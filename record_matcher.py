@@ -11,10 +11,9 @@ import os
 import pandas as pd
 from csv_dedupe import csv_link
 from pandas.core.frame import DataFrame
-from configuration_manager import DATA_PATH
+from settings import DATA_PATH, TEMP_PATH
 from helpers import csv_to_upper, get_delimiter, get_encoding, open_config, open_config, get_file_path, pre_clean, info, todo, error, warning
 
-TEMP_PATH = 'tmp/'
 
 def match_records() -> None:
     """ Matches records accross two files. """

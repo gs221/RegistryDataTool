@@ -1,8 +1,7 @@
-import yaml
 import os
+import yaml
 
-DATA_PATH = './data/'
-CONFIG_PATH = './configurations/'
+from settings import DATA_PATH
 
 class Configuration():
     def __init__(self, yml_path: str) -> None:

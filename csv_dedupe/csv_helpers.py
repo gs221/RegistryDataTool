@@ -8,14 +8,13 @@ import platform
 
 from helpers import info
 from io import StringIO, open
-from configuration_manager import DATA_PATH
+from settings import DATA_PATH, TRAINING_PATH
 
 if platform.system() != 'Windows':
     from signal import signal, SIGPIPE, SIG_DFL
 
     signal(SIGPIPE, SIG_DFL)
 
-TRAINING_PATH = 'training/'
 
 def pre_process(column):
     """
