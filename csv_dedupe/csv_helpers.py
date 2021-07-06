@@ -8,7 +8,7 @@ import platform
 
 from helpers import info
 from io import StringIO, open
-from settings import DATA_PATH, TRAINING_PATH
+from settings import A_ONLY, B_ONLY, DATA_PATH, POTENTIAL_DUPLICATES, POTENTIAL_MATCHES, TRAINING_PATH
 
 if platform.system() != 'Windows':
     from signal import signal, SIGPIPE, SIG_DFL
@@ -85,41 +85,6 @@ def write_results(clustered_dupes, input_file, results_file):
         writer.writerow(row)
 
 
-def write_unique_results(clustered_dupes, input_file, results_file):
-    """ Discards clustered results and prints only unique, unmatched records. """
-
-    info('Saving unique results to: ' + results_file.name)
-
-    cluster_membership = {}
-    for cluster_id, (cluster, score) in enumerate(clustered_dupes):
-        for record_id in cluster:
-            cluster_membership[record_id] = cluster_id
-
-    unique_record_id = cluster_id + 1
-
-    writer = csv.writer(results_file)
-
-    reader = csv.reader(StringIO(input_file))
-
-    heading_row = next(reader)
-    heading_row.insert(0, u'Cluster ID')
-    writer.writerow(heading_row)
-
-    seen_clusters = set()
-    for row_id, row in enumerate(reader):
-        if row_id in cluster_membership:
-            cluster_id = cluster_membership[row_id]
-            if cluster_id not in seen_clusters:
-                row.insert(0, cluster_id)
-                writer.writerow(row)
-                seen_clusters.add(cluster_id)
-        else:
-            cluster_id = unique_record_id
-            unique_record_id += 1
-            row.insert(0, cluster_id)
-            writer.writerow(row)
-
-
 def write_linked_results(clustered_pairs, input_1, input_2, potential_matches, a_only, b_only,
                          inner_join=False) -> None:
     """ Writes results when two csv files are being searched for duplicates. 
@@ -184,12 +149,12 @@ class CsvSetup(object):
         """ Initialises configuration information for the CsvSetup class. """
 
         # File names for record matcher 
-        self.potential_matches = 'potential_matches.csv'
-        self.a_only = 'a_only.csv'
-        self.b_only = 'b_only.csv'
+        self.potential_matches = POTENTIAL_MATCHES
+        self.a_only = A_ONLY
+        self.b_only = B_ONLY
 
         # File name for duplicate detector
-        self.results_file = 'potential_duplicates.csv'
+        self.results_file = POTENTIAL_DUPLICATES
 
         # Training files
         self.training_file = DATA_PATH + TRAINING_PATH + 'training.json'

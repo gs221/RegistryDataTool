@@ -5,13 +5,13 @@ Contains functions that match records across two delimited files.
 
 """
 
-from menu import SingleSelectionMenu
 import os
-
 import pandas as pd
+
 from csv_dedupe import csv_link
+from menu import SingleSelectionMenu
 from pandas.core.frame import DataFrame
-from settings import DATA_PATH, TEMP_PATH, SCL_COLUMNS, UCAS_COLUMNS
+from settings import A_ONLY, B_ONLY, DATA_PATH, POTENTIAL_MATCHES, TEMP_PATH, SCL_COLUMNS, UCAS_COLUMNS
 from helpers import csv_to_upper, get_delimiter, get_encoding, open_config, open_config, get_file_path, pre_clean, info, todo, error, warning
 
 
@@ -87,9 +87,24 @@ def match_records() -> None:
         (conf_a, conf_b) = generate_clean_files(data_a, conf_a, data_b, conf_b, format=False)
 
     # Find Matches
-    # Creates instance of and runs the linker program with the given configuration
+    ## Creates instance of and runs the linker program with the given configuration
     linker = csv_link.CsvLink(conf_a, conf_b)
     linker.run()
+
+    # Format results based on configuration
+    ## If both files opt to format results.
+    if conf_a.format_results and conf_b.format_results:
+        csv_to_upper(POTENTIAL_MATCHES, exclude=conf_a.exclude_columns + conf_b.exclude_columns)
+        csv_to_upper(A_ONLY, exclude=conf_a.exclude_columns)
+        csv_to_upper(B_ONLY, exclude=conf_b.exclude_columns) # TODO
+
+    ## if file_a only opts to format results
+    if conf_a.format_results:
+        pass   # TODO
+
+    ## if file_b only opts to format results 
+    if conf_b.format_results:
+        pass   # TODO
 
 
 def identify_data(data_a, conf_a, data_b, conf_b):

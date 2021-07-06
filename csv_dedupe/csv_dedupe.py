@@ -1,4 +1,5 @@
 import os
+from settings import DATA_PATH, TEMP_PATH
 import sys
 import dedupe
 import logging
@@ -9,28 +10,24 @@ from helpers import error
 
 
 class CsvDedupe(csv_helpers.CsvSetup):
-    def __init__(self, configuration: dict):
-        super(CsvDedupe, self).__init__(configuration)
+    def __init__(self, conf):
+        super(CsvDedupe, self).__init__(conf)
 
         """ Following initialisation, sets up input file and fields for deduper. """
 
+        input = DATA_PATH + TEMP_PATH  + 'option_two_temp.csv'
+
         try:
-            self.input = open(self.configuration['input'], encoding='utf-8').read()
+            self.input = open(input, encoding='utf-8').read()
         except IOError:
-            error('Could not find input file at ' + self.configuration['input'])
+            error('Could not find input file at ' + input)
 
-        if self.field_definition is None:
-            try:
-                self.field_names = self.configuration['field_names']
-                self.field_definition = [{'field': field,
-                                          'type': 'String'}
-                                         for field in self.field_names]
-            except KeyError:
-                error('You must provide field names in configuration file.')
-        else:
-            self.field_names = [field_def['field'] for field_def in self.field_definition]
+        # Set field names from configuration file 
+        self.field_names = conf.column_names
 
-        self.destructive = self.configuration.get('destructive', False)
+        # Dedupe settings. Not modifiable via config
+        self.field_definition = [{'field': field, 'type': 'String'} for field in self.field_names]
+
 
     def run(self):
         """ Runs the deduper program. """
@@ -108,9 +105,6 @@ class CsvDedupe(csv_helpers.CsvSetup):
         logging.info('# duplicate sets %s' % len(clustered_dupes))
 
         write_function = csv_helpers.write_results
-        # write out our results
-        if self.destructive:
-            write_function = csv_helpers.write_unique_results
 
         if self.results_file:
             with open(self.results_file, 'w', encoding='utf-8') as results_file:

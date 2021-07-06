@@ -13,7 +13,7 @@ import pandas as pd
 from platform import system
 from pandas import DataFrame
 from colorama import Fore, Back
-from settings import CONFIG_PATH
+from settings import CONFIG_PATH, DATA_PATH, TEMP_PATH, TRAINING_PATH
 from detect_delimiter import detect
 from menu import SingleSelectionMenu
 from colorama.initialise import deinit
@@ -152,10 +152,10 @@ def cleanup_and_exit(prompt=True) -> None:
     deinit()
 
     # Remove temporary directories
-    if os.path.exists('./data/training'):
-        shutil.rmtree('./data/training')
-    if os.path.exists('./data/tmp'):
-        shutil.rmtree('./data/tmp')
+    if os.path.exists(DATA_PATH + TRAINING_PATH):
+        shutil.rmtree(DATA_PATH + TRAINING_PATH)
+    if os.path.exists(DATA_PATH + TEMP_PATH):
+        shutil.rmtree(DATA_PATH + TEMP_PATH)
 
     # Exit program
     if prompt: input('Press enter to exit ')

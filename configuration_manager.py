@@ -25,12 +25,13 @@ class Configuration():
         self.url_column = self.__load('url_column')
         self.format_results = self.__load('format_results')
         self.exclude_columns = self.__load('exclude_columns', can_be_blank=True)
-
-        # Empty encoding variable to be used when configuration is loaded
-        self.encoding = None
     
         # Perform additional validation on configuration 
         self.__additional_validation()
+
+        # If no columns are give to exclude, change None to empty list
+        if self.exclude_columns is None:
+            self.exclude_columns = []
 
         # Generate columns list
         if self.column_count is None:
