@@ -32,7 +32,8 @@ def match_records() -> None:
     # Check that same number of columns are being considered. 
     if len(conf_a.column_names) != len(conf_b.column_names):
         error('When comparing files, you must specify the same number of columns to be compared.\n' + 
-              '\tThis can be solved by adding/removing \'columns_names\' in the respective configuration files such that both have the same number listed. ')
+              '\tThis can be solved by adding/removing \'columns_names\' in the respective configuration files\n' + 
+              '\tsuch that both have the same number listed. ')
 
     # Get filepath for each file
     conf_a.path = get_file_path(DATA_PATH + conf_a.folder_name, 'Please put ' + conf_a.folder_name + ' data in ' + conf_a.folder_name + ' folder. This folder must contain a single data file.')
