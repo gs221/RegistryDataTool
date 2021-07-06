@@ -3,18 +3,17 @@ import dedupe
 import logging
 
 from io import open
+
+from dedupe.core import BlockingError
 from . import csv_helpers
 from helpers import error
-
+from settings import DATA_PATH, TEMP_PATH
 
 class CsvLink(csv_helpers.CsvSetup):
     def __init__(self, conf_a, conf_b):
         super(CsvLink, self).__init__(conf_a)
 
         """ Following initialisation, sets up input files and fields for linker. """
-
-        from record_matcher import TEMP_PATH
-        from configuration_manager import DATA_PATH
 
         input_one = DATA_PATH + TEMP_PATH + 'temp_a.csv'
         input_two = DATA_PATH + TEMP_PATH + 'temp_b.csv'
@@ -49,11 +48,11 @@ class CsvLink(csv_helpers.CsvSetup):
         # sanity check for provided field names in CSV file
         for field in self.field_names_1:
             if field not in list(data_1.values())[0]:
-                error("Could not find field '" + field + "' in input")
+                error("Could not find field '" + field + "' in input 1")
 
         for field in self.field_names_2:
             if field not in list(data_2.values())[0]:
-                error("Could not find field '" + field + "' in input")
+                error("Could not find field '" + field + "' in input 2")
 
         if self.field_names_1 != self.field_names_2:
             for record_id, record in data_2.items():
@@ -104,7 +103,11 @@ class CsvLink(csv_helpers.CsvSetup):
         # this function but a representative sample.
 
         logging.info('finding a good threshold with a recall_weight of %s' % self.recall_weight)
-        threshold = deduper.threshold(data_1, data_2, recall_weight=self.recall_weight)
+        
+        try:
+            threshold = deduper.threshold(data_1, data_2, recall_weight=self.recall_weight)
+        except BlockingError as e:
+            error(str(e))
 
         # `duplicateClusters` will return sets of record IDs that dedupe
         # believes are all referring to the same entity.
@@ -120,9 +123,9 @@ class CsvLink(csv_helpers.CsvSetup):
 
         # write out our results
         with open(self.potential_matches, 'w', encoding='utf-8') as pm, \
-                open(self.a_only, 'w', encoding='utf-8') as scl, \
-                open(self.b_only, 'w', encoding='utf-8') as ucas:
-            write_function(clustered_dupes, self.input_1, self.input_2, pm, ucas, scl, self.inner_join)
+                open(self.a_only, 'w', encoding='utf-8') as a_only, \
+                open(self.b_only, 'w', encoding='utf-8') as b_only:
+            write_function(clustered_dupes, self.input_1, self.input_2, pm, a_only, b_only, self.inner_join)
 
 
 def exact_matches(data_1, data_2, match_fields):

@@ -120,18 +120,18 @@ def write_unique_results(clustered_dupes, input_file, results_file):
             writer.writerow(row)
 
 
-def write_linked_results(clustered_pairs, input_1, input_2, potential_matches, ucas_only, scl_only,
+def write_linked_results(clustered_pairs, input_1, input_2, potential_matches, a_only, b_only,
                          inner_join=False) -> None:
     """ Writes results when two csv files are being searched for duplicates. 
         - Potential matches: written to a file with combined headers. 
-        - Records unique to scl: written to a file with specified name.
-        - Records unique to ucas: written to a file with specified name.\n 
+        - Records unique to first file written to file a_only.csv.
+        - Records unique to second file written to file b_only.csv.\n 
         NB: Only used in csv_linker.
     """
 
     info('Saving potential matches to: ' + potential_matches.name)
-    info('Saving schools that only appeared in ucas data to: ' + ucas_only.name)
-    info('Saving schools that only appeared in scl data to ' + scl_only.name)
+    info('Saving records that only appeared in data_a data to: ' + a_only.name)
+    info('Saving records that only appeared in data_b data to: ' + b_only.name)
 
     matched_records = []
     seen_1 = set()
@@ -154,13 +154,13 @@ def write_linked_results(clustered_pairs, input_1, input_2, potential_matches, u
 
     # Create csv writers for all output files using passed in filenames
     match_writer = csv.writer(potential_matches)
-    ucas_writer = csv.writer(ucas_only)
-    scl_writer = csv.writer(scl_only)
+    a_only_writer = csv.writer(a_only)
+    b_only_writer = csv.writer(b_only)
 
     # Write headings to each of the output files 
     match_writer.writerow(all_headers)
-    scl_writer.writerow(row_header)
-    ucas_writer.writerow(row_header_2)
+    a_only_writer.writerow(row_header)
+    b_only_writer.writerow(row_header_2)
 
     # Write all matches to file 
     for matches in matched_records:
@@ -171,12 +171,12 @@ def write_linked_results(clustered_pairs, input_1, input_2, potential_matches, u
         # Print rows that were only in input one 
         for i, row in enumerate(input_1):
             if i not in seen_1:
-                scl_writer.writerow(row)
+                a_only_writer.writerow(row)
 
         # Print rows that were only in input two
         for i, row in enumerate(input_2):
             if i not in seen_2:
-                ucas_writer.writerow(row)
+                b_only_writer.writerow(row)
 
 
 class CsvSetup(object):
@@ -212,10 +212,6 @@ class CsvSetup(object):
     def dedupe_training(self, deduper) -> None:
         """ Loads existing training data, or starts manual training process. """
 
-        # Create directory for training information 
-        if not os.path.exists('./data/training'):
-            os.mkdir('./data/training')
-
         if os.path.exists(self.training_file):
             logging.info('Reading labeled examples from %s' % self.training_file)
             with open(self.training_file) as tf:
@@ -228,12 +224,14 @@ class CsvSetup(object):
 
             # When finished, save our training away to disk
             logging.info('Saving training data to %s' % self.training_file)
-            if sys.version < '3':
-                with open(self.training_file, 'wb') as tf:
-                    deduper.writeTraining(tf)
-            else:
-                with open(self.training_file, 'w') as tf:
-                    deduper.writeTraining(tf)
+            
+            # Create directory for training information 
+            if not os.path.exists(DATA_PATH + TRAINING_PATH):
+                os.mkdir(DATA_PATH + TRAINING_PATH)
+            
+            # Write training data to training folder
+            with open(self.training_file, 'w') as tf:
+                deduper.writeTraining(tf)
         else:
             logging.info('Skipping the training step')
 

@@ -56,19 +56,19 @@ def main() -> None:
 
     except ValueError as e:
         # If value error is raised, catch it and print error message. 
-        print(e)
+        error(str(e))
 
-    except TypeError: 
-        error('Invalid configuration selected.')
+    except TypeError as e: 
+        error(str(e))
 
     except ZeroDivisionError as e:
         # If zero division error is raised, catch it and print error message. 
         # If this happens it is likely caused by an attempt to skip training (entering finish immediately)
         error('An attempt was made to divide by zero. This is likely caused by an attempt to proceed without training the program.')
 
-    # except Exception:
-    #     # If all else fails, print exception. 
-    #     error('An unexpected error occurred.', post='\n')
+    except Exception as e:
+        # If all else fails, print exception. 
+        error(str(e), post='\n')
 
     # Clean up before quitting
     cleanup_and_exit()
