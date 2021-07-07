@@ -22,7 +22,7 @@ class Configuration():
         self.characters_to_clean = self.__load('characters_to_clean', can_be_blank=True)
         self.column_names = self.__load('column_names')
         self.recall_weight = self.__load('recall_weight')
-        self.url_column = self.__load('url_column')
+        self.url_column = self.__load('url_column', can_be_blank=True)
         self.format_results = self.__load('format_results')
         self.exclude_columns = self.__load('exclude_columns', can_be_blank=True)
     
