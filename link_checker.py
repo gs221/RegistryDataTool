@@ -1,16 +1,25 @@
-from settings import DATA_PATH
-from requests.api import head
-from os import sep
-import pandas as pd
-from pandas import DataFrame
-import requests
+
 import re
-import validators
-from threading import Thread
-import csv
+import json
+import requests
+import pandas as pd
+import concurrent.futures
+
+from pandas import DataFrame
+from requests.models import Response
+from json.decoder import JSONDecodeError
+from settings import DATA_PATH, EMPTY, NO_RESPONSE, REQUEST_TIMEOUT, VERIFY_CERT, WAYBACK_MACHINE, WBM_API, USE_WBM, LINKS_CHECKED
 from helpers import info, open_config, pre_clean, get_file_path, get_delimiter, get_encoding, error
-import grequests
-import itertools
+
+# Disable insecure request warning, caused by setitng verify=False
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# Set Warnings 
+import logging 
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.ERROR)
+
 
 def check_links():
     # Get file configuration 
@@ -57,47 +66,124 @@ def check_links():
     # Get list of links 
     links = data[conf.url_column].tolist()
 
-    # Pre-proccess links
+    # Format links (remove http, https, blank spaces)
+    formatted_links = format_links(links)
+
+    # Run requests concurrently and get responses
+    responses = run_requests(formatted_links)
+
+    # Create dictionary from original list of links
+    links_dict = dict(enumerate(formatted_links))
+
+    # If there are as many formatted links as there are responses (there should always be)
+    if len(formatted_links) == len(responses):
+        # for every link 
+        for k in links_dict.keys():
+            # Put response codes in correct position 
+            links_dict[k] = responses[k].status_code if isinstance(responses[k], Response) else responses[k]
+    else:
+        error('The number of responses differs from the number of original requests.')
+
+    # Add responses to link check column 
+    data['Link check'] = links_dict.values()
+
+    # Write new data to file 
+    data.to_csv(LINKS_CHECKED, index=False)
 
 
+def run_requests(links):
+    """ Executes the lists of requests concurrently and returns responses (not in order). """
+
+    # Empty list to store responses 
+    responses = {}
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=25) as exec:
+        future_to_url = {exec.submit(setup_request, url): (index, url) for (index, url) in enumerate(links)}
+        for future in concurrent.futures.as_completed(future_to_url):
+
+            (index, url) = future_to_url[future]
+            
+            try:
+                responses[index] = future.result()
+            # except requests.exceptions.ConnectionError as e:
+            #     info('CONNECTION ERROR: ' + url)
+            #     responses.append((url, available_on_wbm(url)))
+            # except requests.exceptions.ConnectTimeout as e:
+            #     info('CONNECTION TIMEOUT: ' + url)
+            #     responses.append((url, available_on_wbm(url)))
+            # except requests.exceptions.ReadTimeout as e:
+            #     info('READ TIMEOUT: ' + url)
+            #     responses.append((url, available_on_wbm(url)))
+            except Exception:
+                responses[index] = available_on_wbm(url)
+
+    return responses
 
 
-    # for i in range(len(links)):
-    #     # Convert to lower case and remove leading and trailing whitespace
-    #     links[i] = links[i].lower().strip()
+def available_on_wbm(url):
+    """ Checks if a given url has an archived snapshot on the wayback machine (internet archive). """
 
-    #     # Regular expressions used to find matching strings/sub-strings
-    #     whitespace = re.compile(r'^\s*$')
-    #     valid_characters = re.compile(r"^[:\/?#[\]@!$&'()*+,;=\w\-~.%]+$")   # According to RFC3986 sections 2.4 and 2.5
+    # If option disabled in settings file, return None
+    if not USE_WBM:
+         return NO_RESPONSE
 
-    #     # If link is whitespace then set to empty
-    #     if whitespace.match(links[i]):
-    #         links[i] = 'EMPTY'
-    #         continue
+    # Send request to API and store content
+    response_content =requests.get(WBM_API + url).content
+    
+    # Attempt to parse response content
+    try:
+        response_json = json.loads(response_content)
+    except JSONDecodeError as e:
+        info('Response from wayback machine api contained invalid JSON. (' + response_content + ')')
 
-    #     # If link has invalid characters
-    #     elif not valid_characters.match(links[i]):
-    #         links[i] = 'INVALID'
-    #         continue
+    # Extract fields from JSON response, by default all are set to empty dicts
+    snapshots = response_json.get('archived_snapshots', {})
+    closest_snapshot = snapshots.get('closest', {})
+    snapshot_status = closest_snapshot.get('status', {})
 
-    #     else:
-    #         links[i] = 'UNCHECKED'
-
-
-
-    data['Link check'] = links
-
-    data.to_csv('links_checked.csv', index=False)
+    # If snapshots is an empty dict then no snapshot is available for the respective site 
+    if snapshots == {}:
+        return NO_RESPONSE
+    # Othweise, if the status of the available snapshot is 200, return WBM to show its availability 
+    else:
+        return WAYBACK_MACHINE if snapshot_status == '200' else NO_RESPONSE
 
 
-def format_link(link: str) -> str:
-    # Convert to lower case and remove leading and trailing whitespace
-    link = link.lower().strip()
+def setup_request(url):
+    """ Sets up and returns web request. """
 
-    # If link is empty then return 
-    if link == '': return ''
+    # If the url is blank/empty, return empty string
+    if url == '':
+        return EMPTY
 
-    # remove https and http from start
-    link = re.sub('https{0,1}(:|;)\/\/', '', link)
+    # Otherwise return request
+    else: 
+        return requests.get(url, 
+                            verify=VERIFY_CERT, 
+                            timeout=REQUEST_TIMEOUT)
 
-    return link
+
+def format_links(links):
+    """ Formats links. Removes whitespace, http:// and https:// and attempts to correct some errors. """
+
+    # For every link in list of links
+    for i in range(len(links)):
+
+        # Convert to lower case and remove leading and trailing whitespace
+        links[i] = links[i].lower().strip()
+
+        # If link consists of only whitespace, set to empty string
+        links[i] = re.sub(r'^\s*$', '', links[i])
+
+        # Remove https and http from start, account for possible :; and /\ typo
+        links[i] = re.sub(r'https{0,1}(:|;)\/\/', '', links[i])
+
+        # If a link doesnt now begin with www. add it to the start 
+        if not links[i].startswith('www.') and links[i] != '':
+            links[i] = 'www.' + links[i]
+
+        # Append https:// to the start of each 
+        if links[i] != '':
+            links[i] = 'http://' + links[i]
+
+    return links

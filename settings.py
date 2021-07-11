@@ -26,3 +26,22 @@ SCL_COLUMNS = ['School code', 'Short name', 'Full name', 'Hercules update timest
 # File names
 POTENTIAL_DUPLICATES = 'potential_duplicates.csv'
 
+
+
+""" ---------- Menu Option Three ---------- """
+
+# File names
+LINKS_CHECKED = 'links_checked.csv'
+
+# Request Options
+REQUEST_TIMEOUT = 30
+VERIFY_CERT = False
+
+# Link check codes
+EMPTY = 'EMP'
+NO_RESPONSE = 'NOR'
+WAYBACK_MACHINE = 'WBM'
+
+# Wayback machine API
+USE_WBM = False
+WBM_API = 'https://archive.org/wayback/available?url='
