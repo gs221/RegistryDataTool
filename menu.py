@@ -10,13 +10,16 @@ class SingleSelectionMenu:
         else:
             self.options = options
 
+
     def add_title(self, title: str) -> None:
         """ Sets or adds menu title. """
         self.title = title
 
+
     def add_option(self, option: str) -> None:
         """ Appends option to list of options. """
         self.options.append(option)
+
 
     def show(self, run_before=None) -> int:
         """ Shows the menu as configured. Returns validated value entered by user. """

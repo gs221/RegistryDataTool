@@ -34,14 +34,18 @@ POTENTIAL_DUPLICATES = 'potential_duplicates.csv'
 LINKS_CHECKED = 'links_checked.csv'
 
 # Request Options
-REQUEST_TIMEOUT = 30
-VERIFY_CERT = False
+REQUEST_TIMEOUT = 30  # Length of time (s) a site has to respond to request.
+VERIFY_CERT = False   # Determines whether or not a sites security certificate is verified. 
 
-# Link check codes
+# Link check codes printed in 'Link check' column of output. 
 EMPTY = 'EMP'
 NO_RESPONSE = 'NOR'
 WAYBACK_MACHINE = 'WBM'
 
 # Wayback machine API
-USE_WBM = False
+USE_WBM = False # True:  For links that dont yeild a response (NOR), will write 'WBM' 
+                #        if there is a snapshot of the site available in the 
+                #        internet archive. 
+                # False: Will print NOR for all links that dont yeild a response. Will 
+                #        not check Wayback Machine. 
 WBM_API = 'https://archive.org/wayback/available?url='

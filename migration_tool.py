@@ -66,6 +66,10 @@ def main() -> None:
         # If this happens it is likely caused by an attempt to skip training (entering finish immediately)
         error('An attempt was made to divide by zero. This is likely caused by an attempt to proceed without training the program.')
 
+    except Exception as e:
+        # If all else fails, print exception. 
+        error(e)
+
     # Clean up before quitting
     cleanup_and_exit()
 
