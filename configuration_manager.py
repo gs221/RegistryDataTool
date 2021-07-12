@@ -105,3 +105,4 @@ class Configuration():
         # Ensure that url columns is list if single column given by user
         if not isinstance(self.url_columns, list):
             self.url_columns = [self.url_columns]
+            

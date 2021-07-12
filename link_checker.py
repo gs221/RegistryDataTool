@@ -53,8 +53,8 @@ def check_links():
                                   encoding=conf.encoding) 
 
     # If no column has been specified in config, exit. 
-    if conf.url_columns is None:
-        error('No url_column specified in selected configuration.')
+    if conf.url_columns == None or conf.url_columns == [None]:
+        error('No url_column(s) specified in selected configuration.')
 
     # If specified column is not in data, exit. 
     for column in conf.url_columns:
