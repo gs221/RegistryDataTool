@@ -10,7 +10,7 @@ Tool created for the University of St Andrews Academic Registry to aid in the im
 ## Prerequisites and Installation
 Clone repository:
 ```
-git clone https://github.com/gs221/SCL-Tool.git
+git clone https://github.com/gs221/RegistryDataTool.git
 ```
 If using windows you must install the following build tools:
 - MSVC v142 -VS 2019 C++ x64/x86 build tools (Latest)
