@@ -53,39 +53,43 @@ def check_links():
                                   encoding=conf.encoding) 
 
     # If no column has been specified in config, exit. 
-    if conf.url_column is None:
+    if conf.url_columns is None:
         error('No url_column specified in selected configuration.')
 
     # If specified column is not in data, exit. 
-    if not conf.url_column in data.columns:
-        error('Could not find ' + conf.url_column + '. Have you entered it correctly in the configuration file?')
+    for column in conf.url_columns:
+        if not column in data.columns:
+            error('Could not find ' + column + '. Have you entered it correctly in the configuration file?')
 
-    # Add additional column to start of data to show result of link checking 
-    data.insert(loc=data.columns.get_loc(conf.url_column), column='Link check', value='')
+    # Validate links in all url column
+    for count, column in enumerate(conf.url_columns, 1):
 
-    # Get list of links 
-    links = data[conf.url_column].tolist()
+        # Add additional columns to data to show result of link checking 
+        data.insert(loc=data.columns.get_loc(column), column='Link Check-' + str(count), value='')
 
-    # Format links (remove http, https, blank spaces)
-    formatted_links = format_links(links)
+        # Get list of links 
+        links = data[column].tolist()
 
-    # Run requests concurrently and get responses
-    responses = run_requests(formatted_links)
+        # Format links (remove http, https, blank spaces)
+        formatted_links = format_links(links)
 
-    # Create dictionary from original list of links
-    links_dict = dict(enumerate(formatted_links))
+        # Run requests concurrently and get responses
+        responses = run_requests(formatted_links)
 
-    # If there are as many formatted links as there are responses (there should always be)
-    if len(formatted_links) == len(responses):
-        # for every link 
-        for k in links_dict.keys():
-            # Put response codes in correct position 
-            links_dict[k] = responses[k].status_code if isinstance(responses[k], Response) else responses[k]
-    else:
-        error('The number of responses differs from the number of original requests.')
+        # Create dictionary from original list of links
+        links_dict = dict(enumerate(formatted_links))
 
-    # Add responses to link check column 
-    data['Link check'] = links_dict.values()
+        # If there are as many formatted links as there are responses (there should always be)
+        if len(formatted_links) == len(responses):
+            # for every link 
+            for k in links_dict.keys():
+                # Put response codes in correct position 
+                links_dict[k] = responses[k].status_code if isinstance(responses[k], Response) else responses[k]
+        else:
+            error('The number of responses differs from the number of original requests.')
+
+        # Add responses to link check column 
+        data['Link Check-' + str(count)] = links_dict.values()
 
     # Write new data to file 
     data.to_csv(LINKS_CHECKED, index=False)
@@ -104,17 +108,9 @@ def run_requests(links):
             (index, url) = future_to_url[future]
             
             try:
-                responses[index] = future.result()
-            # except requests.exceptions.ConnectionError as e:
-            #     info('CONNECTION ERROR: ' + url)
-            #     responses.append((url, available_on_wbm(url)))
-            # except requests.exceptions.ConnectTimeout as e:
-            #     info('CONNECTION TIMEOUT: ' + url)
-            #     responses.append((url, available_on_wbm(url)))
-            # except requests.exceptions.ReadTimeout as e:
-            #     info('READ TIMEOUT: ' + url)
-            #     responses.append((url, available_on_wbm(url)))
-            except Exception:
+                responses[index] = future.result()  
+            except Exception as e:
+                info(str(e))
                 responses[index] = available_on_wbm(url)
 
     return responses
