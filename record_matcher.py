@@ -60,10 +60,10 @@ def match_records() -> None:
     # Stores file contents present in configured folders into data frames
     data_a: DataFrame = pd.read_csv(conf_a.path, 
                                     sep=file_a_delimiter,
-                                    dtype=str,
-                                    usecols=conf_a.columns,
-                                    keep_default_na=False,
-                                    encoding=conf_a.encoding) 
+                                    dtype=str,                  # All column types set to string to prevent type errors. 
+                                    usecols=conf_a.columns,     # Only import number of columns specified in config.
+                                    keep_default_na=False,      # Prevents pandas from filling empty cells with NaN.
+                                    encoding=conf_a.encoding)   # Prevents decoding error when importing the data. 
     
     data_b: DataFrame = pd.read_csv(conf_b.path, 
                                     sep=file_b_delimiter,

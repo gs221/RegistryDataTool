@@ -8,9 +8,8 @@ import os
 import sys
 import glob
 import shutil
-
 import pandas as pd
-from platform import system
+
 from pandas import DataFrame
 from colorama import Fore, Back
 from settings import CONFIG_PATH, DATA_PATH, TEMP_PATH, TRAINING_PATH
@@ -160,21 +159,6 @@ def cleanup_and_exit(prompt=True) -> None:
     # Exit program
     if prompt: input('Press enter to exit ')
     sys.exit(0)
-
-
-def time_estimate(windows='', other_os='', all_os='') -> str:
-    """ Returns string time estimate based on current operating system. windowss or otherwise. """
-
-    # If all is set reurn estimate regardless of system type.
-    if all_os != '':
-        return '~' + all_os + 'min'
-
-    # If system is windows, return estimate for windows only. 
-    if system() == 'Windows': 
-        return '~' + windows + 'min'
-
-    # Otherwise return estimate for other system types. 
-    return '~' + other_os + 'min'
 
 
 def get_file_path(path: str, msg: str) -> str:

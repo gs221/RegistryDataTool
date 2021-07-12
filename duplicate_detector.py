@@ -45,10 +45,10 @@ def detect_duplicates() -> None:
     # Stores file contents present in configured folders into data frame
     data: DataFrame = pd.read_csv(conf.path, 
                                   sep=file_delimiter,
-                                  dtype=str,
-                                  usecols=conf.columns,
-                                  keep_default_na=False,
-                                  encoding=conf.encoding) 
+                                  dtype=str,                # All column types set to string to prevent type errors. 
+                                  usecols=conf.columns,     # Only import number of columns specified in config. 
+                                  keep_default_na=False,    # Prevents Pandas from filling empty cells with NaN.
+                                  encoding=conf.encoding)   # Prevents decoding error when importing the data. 
 
     # Generate clean file from data for dedupe
     generate_clean_file(data, 'option_two_temp.csv')
