@@ -29,3 +29,4 @@ zope.interface==5.4.0
 colorama==0.4.4
 pyyaml==5.4.1
 requests==2.25.1
+pyperclip==1.8.2

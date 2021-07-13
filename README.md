@@ -1,4 +1,4 @@
-# Registry UCAS-SCL Migration Tool
+# Registry Data Tool
 
 ## Description
 Tool created for the University of St Andrews Academic Registry to aid in the importation of external ucas data into internal school table. The tool includes the following options: 

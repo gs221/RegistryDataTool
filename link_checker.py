@@ -4,6 +4,7 @@ import json
 import requests
 import pandas as pd
 import concurrent.futures
+import pyperclip as clipboard
 
 from pandas import DataFrame
 from requests.models import Response
@@ -94,6 +95,8 @@ def check_links():
     # Write new data to file 
     data.to_csv(LINKS_CHECKED, index=False)
 
+    manual_check(data, conf.url_columns)
+
 
 def run_requests(links):
     """ Executes the lists of requests concurrently and returns responses (not in order). """
@@ -183,3 +186,29 @@ def format_links(links):
             links[i] = 'http://' + links[i]
 
     return links
+
+
+def manual_check(status, url):
+
+    print('----------------- Manual Check -------------------\n')
+
+    info('The URL has been copied to the clipboard. You can paste this in your browser.', post='\n')
+
+    print('URL: ' + url)
+    print('Status code: ' + str(status))
+    clipboard.copy(url)
+
+    print()
+
+    while True:
+        selection = input('Is this url (v)alid or (i)nvalid? ').lower()
+        if selection == 'v':
+            print()
+            return True
+        elif selection == 'i':
+            print()
+            return False
+
+manual_check(404, "http://amazon.com")
+manual_check(502, "http://notawebsite.com")
+
