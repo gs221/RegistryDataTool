@@ -112,7 +112,7 @@ class CsvLink(csv_helpers.CsvSetup):
         try:
             threshold = deduper.threshold(data_1, data_2, recall_weight=self.recall_weight)
         except BlockingError as e:
-            error(str(e))
+            error('No records could be linked together. This is likely caused by only saying no during training.')
 
         # `duplicateClusters` will return sets of record IDs that dedupe
         # believes are all referring to the same entity.

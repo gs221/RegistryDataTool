@@ -12,6 +12,7 @@ import logging
 from io import open
 from . import csv_helpers
 from helpers import error
+from dedupe.core import BlockingError
 from settings import DATA_PATH, TEMP_PATH
 
 class CsvDedupe(csv_helpers.CsvSetup):
@@ -87,7 +88,11 @@ class CsvDedupe(csv_helpers.CsvSetup):
         # this function but a representative sample.
 
         logging.info('finding a good threshold with a recall_weight of %s' % self.recall_weight)
-        threshold = deduper.threshold(unique_d, recall_weight=self.recall_weight)
+        
+        try:
+            threshold = deduper.threshold(unique_d, recall_weight=self.recall_weight)
+        except BlockingError as e:
+            error('No records could be linked together. This is likely caused by only saying no during training.')
 
         # `duplicateClusters` will return sets of record IDs that dedupe
         # believes are all referring to the same entity.
