@@ -8,9 +8,8 @@ import os
 import sys
 import glob
 import shutil
-import pandas as pd
+import platform
 
-from pandas import DataFrame
 from colorama import Fore, Back
 from detect_delimiter import detect
 from menu import SingleSelectionMenu
@@ -54,8 +53,11 @@ def open_config() -> dict:
             # Gets a list of .config files in path 
             config_files = glob.glob(os.path.join(CONFIG_PATH, '*.conf'))
 
-            # Strips paths and leaves file names
-            config_file_names = [file.split('/')[-1] for file in config_files]
+            # Strips paths and leaves file names depending on system
+            if platform.system() == 'Windows':
+                config_file_names = [file.split('\\')[-1] for file in config_files]
+            else:
+                config_file_names = [file.split('/')[-1] for file in config_files]
 
             # If there is less than one configuration file in the path, print error. 
             if len(config_files) < 1: 
