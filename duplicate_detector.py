@@ -1,7 +1,7 @@
 """
 DuplicateDetector.py
 
-This file contains the functions that are used to identify duplicate schools in a single csv file.
+This file contains the functions that are used to identify duplicate rows in a single csv file.
 """
 
 import os
