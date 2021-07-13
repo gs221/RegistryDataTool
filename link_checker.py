@@ -15,7 +15,7 @@ from pandas import DataFrame
 from requests.models import Response
 from json.decoder import JSONDecodeError
 from helpers import info, open_config, pre_clean, get_file_path, get_delimiter, get_encoding, error
-from settings import DATA_PATH, EMPTY, NO_RESPONSE, REQUEST_TIMEOUT, VERIFY_CERT, WAYBACK_MACHINE, WBM_API, USE_WBM, LINKS_CHECKED
+from settings import DATA_PATH, EMPTY, INVALID, NO_RESPONSE, REQUEST_TIMEOUT, VERIFY_CERT, WAYBACK_MACHINE, WBM_API, USE_WBM, LINKS_CHECKED
 
 # Disable insecure request warning, caused by setitng verify=False
 import urllib3
@@ -96,6 +96,7 @@ def check_links():
 
         # Add responses to link check column 
         data['Link Check-' + str(count)] = links_dict.values()
+
 
     # Write new data to file 
     data.to_csv(LINKS_CHECKED, index=False)
@@ -208,11 +209,10 @@ def manual_check(status, url):
         selection = input('Is this url (v)alid or (i)nvalid? ').lower()
         if selection == 'v':
             print()
-            return True
+            return '200'
         elif selection == 'i':
             print()
-            return False
+            return INVALID # Set in settings file
 
 # manual_check(404, "http://amazon.com")
 # manual_check(502, "http://notawebsite.com")
-

@@ -41,6 +41,7 @@ VERIFY_CERT = False   # Determines whether or not a sites security certificate i
 EMPTY = 'EMP'
 NO_RESPONSE = 'NOR'
 WAYBACK_MACHINE = 'WBM'
+INVALID = 'INV'
 
 # Wayback machine API
 USE_WBM = False # True:  For links that dont yeild a response (NOR), will write 'WBM' 
