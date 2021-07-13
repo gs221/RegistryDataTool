@@ -2,7 +2,6 @@
 Record Matcher:
 
 Contains functions that match records across two delimited files.
-
 """
 
 import os
@@ -154,6 +153,7 @@ def generate_clean_files(data_a, conf_a, data_b, conf_b, format=False) -> None:
             ucas = ucas[ucas['School'].isin(scl['School code']) == False]
 
             # Remove UCAS codes and other malformed codes leaving only internal codes
+            # Useful Regular Expression Site: https://regex101.com/ 
             scl = scl[scl['School code'].str.contains(r'^[a-zA-Z]{2}\d{3,5}$', na=False)]
 
             # Generate clean files and place in directory

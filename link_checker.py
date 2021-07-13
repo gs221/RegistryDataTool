@@ -1,3 +1,8 @@
+"""
+Link Checker: 
+
+Automatically tests links in a file. 
+"""
 
 import re
 import json
@@ -9,8 +14,8 @@ import pyperclip as clipboard
 from pandas import DataFrame
 from requests.models import Response
 from json.decoder import JSONDecodeError
-from settings import DATA_PATH, EMPTY, NO_RESPONSE, REQUEST_TIMEOUT, VERIFY_CERT, WAYBACK_MACHINE, WBM_API, USE_WBM, LINKS_CHECKED
 from helpers import info, open_config, pre_clean, get_file_path, get_delimiter, get_encoding, error
+from settings import DATA_PATH, EMPTY, NO_RESPONSE, REQUEST_TIMEOUT, VERIFY_CERT, WAYBACK_MACHINE, WBM_API, USE_WBM, LINKS_CHECKED
 
 # Disable insecure request warning, caused by setitng verify=False
 import urllib3
@@ -65,7 +70,7 @@ def check_links():
     # Validate links in all url column
     for count, column in enumerate(conf.url_columns, 1):
 
-        # Add additional columns to data to show result of link checking 
+        # Add additional column(s) to data to show result of link checking 
         data.insert(loc=data.columns.get_loc(column), column='Link Check-' + str(count), value='')
 
         # Get list of links 
@@ -94,8 +99,6 @@ def check_links():
 
     # Write new data to file 
     data.to_csv(LINKS_CHECKED, index=False)
-
-    manual_check(data, conf.url_columns)
 
 
 def run_requests(links):
@@ -132,7 +135,7 @@ def available_on_wbm(url):
     # Attempt to parse response content
     try:
         response_json = json.loads(response_content)
-    except JSONDecodeError as e:
+    except JSONDecodeError:
         info('Response from wayback machine api contained invalid JSON. (' + response_content + ')')
 
     # Extract fields from JSON response, by default all are set to empty dicts
@@ -171,6 +174,7 @@ def format_links(links):
         # Convert to lower case and remove leading and trailing whitespace
         links[i] = links[i].lower().strip()
 
+        ## Unsure about regular expressions? Try and copy the expression (eg, ^\s*$) into this site https://regex101.com/ for an explanation
         # If link consists of only whitespace, set to empty string
         links[i] = re.sub(r'^\s*$', '', links[i])
 
@@ -181,7 +185,7 @@ def format_links(links):
         if not links[i].startswith('www.') and links[i] != '':
             links[i] = 'www.' + links[i]
 
-        # Append https:// to the start of each 
+        # Append http:// to the start of each 
         if links[i] != '':
             links[i] = 'http://' + links[i]
 
@@ -209,6 +213,6 @@ def manual_check(status, url):
             print()
             return False
 
-manual_check(404, "http://amazon.com")
-manual_check(502, "http://notawebsite.com")
+# manual_check(404, "http://amazon.com")
+# manual_check(502, "http://notawebsite.com")
 

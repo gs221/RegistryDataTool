@@ -1,7 +1,12 @@
+"""
+CSV Helpers: 
+
+Functions used by csv_dedupe and csv_link for setup, pre-processing, data reading and data writing. 
+"""
+
 import os
 import re
 import csv
-import sys
 import dedupe
 import logging
 import platform

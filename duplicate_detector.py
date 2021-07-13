@@ -2,7 +2,6 @@
 DuplicateDetector.py
 
 This file contains the functions that are used to identify duplicate schools in a single csv file.
-
 """
 
 import os
@@ -11,11 +10,9 @@ import csv_dedupe
 import pandas as pd
 from pandas import DataFrame
 from csv_dedupe import csv_dedupe
-from settings import DATA_PATH
+from settings import DATA_PATH, TEMP_PATH
 from helpers import get_delimiter, get_encoding, open_config, get_file_path, pre_clean, info
 
-# Path for cleaned file to be stored 
-cleaned_csv_path = './data/tmp/'
 
 def detect_duplicates() -> None:
     """ Detects duplicates in a singe csv file. """
@@ -61,7 +58,7 @@ def detect_duplicates() -> None:
 def generate_clean_file(data: DataFrame, cleaned_file_name: str):
     """ Takes pandas data frame and creates a clean csv file. This prevents errors caused by unusual encodings. """
 
-    if not os.path.exists(cleaned_csv_path):
-        os.mkdir(cleaned_csv_path)
+    if not os.path.exists(DATA_PATH + TEMP_PATH):
+        os.mkdir(DATA_PATH + TEMP_PATH)
 
-    data.to_csv(cleaned_csv_path + cleaned_file_name, index=False)
+    data.to_csv(DATA_PATH + TEMP_PATH + cleaned_file_name, index=False)

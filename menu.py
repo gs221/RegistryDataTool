@@ -1,3 +1,9 @@
+"""
+Menu:
+
+Allows for easy creation of textual menus. Takes in a tile and options, formats and displays the menu. 
+"""
+
 class SingleSelectionMenu:
     """ Contains options to allow a menu to be created from which a single option can be selected. """
 

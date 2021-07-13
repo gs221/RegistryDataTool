@@ -1,3 +1,9 @@
+"""
+Configuration Manager: 
+
+Contains class that loads and performs preliminary validation on configuration files. 
+"""
+
 import os
 import yaml
 

@@ -1,3 +1,9 @@
+"""
+Registry Tool: 
+
+This file creates the data folder (if it doesnt already exist), loads the main menu and calls respective options 
+based on user input. Contains overall exception handling. 
+"""
 
 import os
 

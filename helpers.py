@@ -12,12 +12,13 @@ import pandas as pd
 
 from pandas import DataFrame
 from colorama import Fore, Back
-from settings import CONFIG_PATH, DATA_PATH, TEMP_PATH, TRAINING_PATH
 from detect_delimiter import detect
 from menu import SingleSelectionMenu
 from colorama.initialise import deinit
 from json.decoder import JSONDecodeError
 from configuration_manager import Configuration
+from settings import CONFIG_PATH, DATA_PATH, TEMP_PATH, TRAINING_PATH
+
 
 def pre_clean(file_path, encoding, to_remove) -> None:
     """ Removes given characters from the file to prevent errors during importation. """

@@ -1,12 +1,17 @@
+"""
+CSV Link:
+
+Used by record_matched to identify duplicates accross two csv files. 
+"""
+
 import os
 import dedupe
 import logging
 
 from io import open
-
-from dedupe.core import BlockingError
 from . import csv_helpers
 from helpers import error
+from dedupe.core import BlockingError
 from settings import DATA_PATH, TEMP_PATH
 
 class CsvLink(csv_helpers.CsvSetup):

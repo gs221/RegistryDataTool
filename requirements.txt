@@ -1,3 +1,8 @@
+## Requirements for Registry Tool 
+# These must all be installed before using the tool. 
+# To install type: 'pip install -r requirements.txt' into your terminal from the same directory as this file. 
+# For further instructions, see documentation. 
+
 affinegap==1.11
 BTrees==4.9.2
 categorical-distance==1.9

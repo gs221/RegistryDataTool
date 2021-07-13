@@ -1,5 +1,10 @@
+"""
+CSV Dedupe:
+
+Used by duplicate_detector to train and detect duplicates within a single file. 
+"""
+
 import os
-from settings import DATA_PATH, TEMP_PATH
 import sys
 import dedupe
 import logging
@@ -7,7 +12,7 @@ import logging
 from io import open
 from . import csv_helpers
 from helpers import error
-
+from settings import DATA_PATH, TEMP_PATH
 
 class CsvDedupe(csv_helpers.CsvSetup):
     def __init__(self, conf):
@@ -56,7 +61,7 @@ class CsvDedupe(csv_helpers.CsvSetup):
             unique_d, parents = exact_matches(data_d, fields)
 
         else:
-            # # Create a new deduper object and pass our data model to it.
+            # Create a new deduper object and pass our data model to it.
             deduper = dedupe.Dedupe(self.field_definition)
 
             fields = {variable.field for variable in deduper.data_model.primary_fields}
