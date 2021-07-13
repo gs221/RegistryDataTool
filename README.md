@@ -3,9 +3,9 @@
 ## Description
 Tool created for the University of St Andrews Academic Registry to aid in the importation of external ucas data into internal school table. The tool includes the following options: 
 
-- Find centres with internal ID that now have relevant UCAS ID.
-- Detect duplicate schools in UCAS data only. 
-- Detect duplicates in SCL data only. 
+- Detect duplicates across two delimited files. 
+- Detect duplicate across a single delimited file. 
+- Automatically test links in a file. 
 
 ## Prerequisites and Installation
 Clone repository:
