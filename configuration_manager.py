@@ -29,15 +29,9 @@ class Configuration():
         self.column_names = self.__load('column_names')
         self.recall_weight = self.__load('recall_weight')
         self.url_columns = self.__load('url_columns', can_be_blank=True)
-        self.format_results = self.__load('format_results')
-        self.exclude_columns = self.__load('exclude_columns', can_be_blank=True)
     
         # Perform additional validation on configuration 
         self.__additional_validation()
-
-        # If no columns are give to exclude, change None to empty list
-        if self.exclude_columns is None:
-            self.exclude_columns = []
 
         # Generate columns list
         if self.column_count is None:
@@ -103,10 +97,6 @@ class Configuration():
         # Ensure recall weight is greater than zero 
         if self.recall_weight < 1:
             error('Recall weight must be greater than zero.')
-
-        # Format results must be yes or no (true/false)
-        if not isinstance(self.format_results, bool):
-            error('Format results must be either yes or no. \'' + str(self.format_results) + '\' is invalid.')
 
         # Ensure that url columns is list if single column given by user
         if not isinstance(self.url_columns, list):

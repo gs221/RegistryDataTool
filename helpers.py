@@ -47,26 +47,36 @@ def open_config() -> dict:
     """ Prompts user to select configuration file from list. Returns validated configuration object. """
 
     try:
-        
-        # Otherwise informs the user that default config file could not be found.
-        todo('Please select a configuration file from the list below.', pre='\n', post='\n')
+        while True:
+            # Otherwise informs the user that default config file could not be found.
+            todo('Please select a configuration file from the list below.', pre='\n', post='\n')
 
-        # Gets a list of .config files in path 
-        config_files = glob.glob(os.path.join(CONFIG_PATH, '*.conf'))
+            # Gets a list of .config files in path 
+            config_files = glob.glob(os.path.join(CONFIG_PATH, '*.conf'))
 
-        # Strips paths and leaves file names
-        config_file_names = [file.split('/')[-1] for file in config_files]
+            # Strips paths and leaves file names
+            config_file_names = [file.split('/')[-1] for file in config_files]
 
-        # If there is less than one configuration file in the path, print error. 
-        if len(config_files) < 1: 
-            error('Couldnt find any configuration files. Ensure they are in the configuration folder and have extension .config.')
+            # If there is less than one configuration file in the path, print error. 
+            if len(config_files) < 1: 
+                error('Couldnt find any configuration files. Ensure they are in the configuration folder and have extension .config.')
 
-        # Generates menu consisting of discovered config files.
-        config_menu = SingleSelectionMenu(options=config_file_names)
+            # Add reload option to list of discovered config files
+            all_options = config_file_names + ['reload configurations']
 
-        # Attempts to parse and return user selected configuration 
-        # -1 as list index starts at 0 but menu selections start at 1. 
-        return Configuration(config_files[config_menu.show() - 1])
+            # Generates menu consisting of discovered config files.
+            config_menu = SingleSelectionMenu(options=all_options)
+
+            # Show menu and get user selection
+            selection = config_menu.show()
+
+            # If user choses to reload menu, reload.
+            if selection == len(all_options):
+                continue
+
+            # Attempts to parse and return user selected configuration 
+            # -1 as list index starts at 0 but menu selections start at 1. 
+            return Configuration(config_files[selection - 1])
 
     except FileNotFoundError:
         # If the file could not be found, print  meaningful error message.
@@ -84,39 +94,6 @@ def try_again() -> None:
         value = input("Enter 't' to try again or 'e' to exit. ").lower()
         if value == 't': return
         if value == 'e': sys.exit(0)
-
-
-def csv_to_upper(file_path: str, exclude=None) -> None:
-    """ Converts every column to uppercase in given file excluding column names set to exclude. """
-
-    # Check that file exists
-    if not os.path.isfile(file_path):
-        error('Could not locate \'' + file_path + '\'. Formatting could not be performed.')
-
-    # Print informative message to user
-    info('Formatting ' + file_path + '.', fin='')
-
-    # If columns have been given to exclude from formatting, print columns
-    if exclude is not None:
-        print(' Excluding columns: ', end='')
-        print(*exclude, sep=', ', end='')
-        print('.', end='')
-
-    # Import file into pandas
-    file_data: DataFrame = pd.read_csv(file_path, sep=',', dtype=str, keep_default_na=False)
-
-    # Make all columns uppercase in all files
-    file_data = file_data.apply(lambda x: x.str.upper())
-
-    # Convert excluded columns back to lowercase
-    if exclude is not None:
-        for column in exclude:
-            file_data[column] = file_data[column].str.lower()
-
-    # Write formatted tables to file
-    file_data.to_csv(file_path, index=False)
-
-    print(' (Finished)')
 
 
 def error(msg: str, fin=None, pre='', post='') -> None:
