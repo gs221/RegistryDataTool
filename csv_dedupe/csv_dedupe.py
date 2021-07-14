@@ -47,7 +47,7 @@ class CsvDedupe(csv_helpers.CsvSetup):
         for field in self.field_definition:
             if field['type'] != 'Interaction':
                 if not field['field'] in data_d[0]:
-                    error("Could not find field '" + str(field) + "' in input")
+                    error("Could not find column '" + str(field.get('field')) + "' please check it is present in data set, spelt correctly and has same case.")
 
         logging.info('using fields: %s' % [field['field'] for field in self.field_definition])
 

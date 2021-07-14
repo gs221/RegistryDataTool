@@ -53,11 +53,11 @@ class CsvLink(csv_helpers.CsvSetup):
         # sanity check for provided field names in CSV file
         for field in self.field_names_1:
             if field not in list(data_1.values())[0]:
-                error("Could not find field '" + field + "' in input 1")
+                error("Could not find column '" + str(field) + "' please check it is present in data set, spelt correctly and has same case.")
 
         for field in self.field_names_2:
             if field not in list(data_2.values())[0]:
-                error("Could not find field '" + field + "' in input 2")
+                error("Could not find column '" + str(field) + "' please check it is present in data set, spelt correctly and has same case.")
 
         if self.field_names_1 != self.field_names_2:
             for record_id, record in data_2.items():
