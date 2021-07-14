@@ -29,6 +29,8 @@ class Configuration():
         self.column_names = self.__load('column_names')
         self.recall_weight = self.__load('recall_weight')
         self.url_columns = self.__load('url_columns', can_be_blank=True)
+        self.id_column = self.__load('id_column', can_be_blank=True)
+        self.diff_columns = self.__load('diff_columns', can_be_blank=True)
     
         # Perform additional validation on configuration 
         self.__additional_validation()
@@ -101,4 +103,9 @@ class Configuration():
         # Ensure that url columns is list if single column given by user
         if not isinstance(self.url_columns, list):
             self.url_columns = [self.url_columns]
+        
+        # Ensure that diff columns is list if single column given by user
+        if not isinstance(self.diff_columns, list):
+            self.diff_columns = [self.diff_columns]
+
             

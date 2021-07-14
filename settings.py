@@ -50,3 +50,10 @@ USE_WBM = False # True:  For links that dont yeild a response (NOR), will write 
                 # False: Will print NOR for all links that dont yeild a response. Will 
                 #        not check Wayback Machine. 
 WBM_API = 'https://archive.org/wayback/available?url='
+
+
+
+""" ---------- Menu Option Four ---------- """
+
+# File names
+DIFFERENCES = 'differences.csv'

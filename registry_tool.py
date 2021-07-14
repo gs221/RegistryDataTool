@@ -14,6 +14,7 @@ from record_matcher import match_records
 from configuration_manager import DATA_PATH
 from duplicate_detector import detect_duplicates
 from helpers import cleanup_and_exit, info, error
+from difference_detector import detect_differences
 
 
 def run_menu() -> None:
@@ -34,6 +35,7 @@ def run_menu() -> None:
     menu_options = ['Match records between two files.',
                     'Detect duplicates within a single file.',
                     'Verify links in file.',
+                    'Check for differences between records with same ID accross two files.',
                     'Exit']
 
     # Create menu with above menu options
@@ -53,6 +55,8 @@ def run_menu() -> None:
     elif selection == 3: 
         check_links()
     elif selection == 4: 
+        detect_differences()
+    elif selection == 5:
         cleanup_and_exit(prompt=False)
     else: error('Invalid menu option selected', post='\n', pre='\n')
 
@@ -72,9 +76,9 @@ def main() -> None:
         # If this happens it is likely caused by an attempt to skip training (entering finish immediately when training)
         error('An attempt was made to divide by zero. This is likely caused by an attempt to proceed without training the program.')
 
-    except Exception as e:
-        # If all else fails, print exception. 
-        error(str(e))
+    # except Exception as e:
+    #     # If all else fails, print exception. 
+    #     error(str(e))
 
     # Clean up before quitting
     cleanup_and_exit()
