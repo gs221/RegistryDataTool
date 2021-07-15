@@ -117,7 +117,7 @@ class CsvDedupe(csv_helpers.CsvSetup):
         write_function = csv_helpers.write_results
 
         if self.results_file:
-            with open(self.results_file, 'w', encoding='utf-8') as results_file:
+            with open(self.results_file, 'w', newline='') as results_file:
                 write_function(clustered_dupes, self.input, results_file)
         else:
             write_function(clustered_dupes, self.input, sys.stdout)

@@ -170,7 +170,7 @@ def get_encoding(file_path: str) -> str:
     """ Attepmts to determine a suitable encoding for a file by opening and reading it with potential encoding. """
 
     # List of potential encodings 
-    encodings = ['utf_8', 'iso8859_15', 'ascii', 'utf_16', 'utf_32']
+    encodings = ['utf_8', 'Windows-1252', 'iso8859_15', 'ascii', 'utf_16', 'utf_32']
 
     # loop through, return encoding that works or quit if no encoding is suitable
     for encoding in encodings:

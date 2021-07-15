@@ -15,6 +15,10 @@ def detect_differences():
   # Show that configuration files have been loaded successfully.
   info('Configuration files loaded successfully.', pre='\n')
 
+  # Check that two different configurations were selected 
+  if conf_a.config_path == conf_b.config_path:
+      error('You selected the same configuration twice (' + conf_a.config_path + '). Select two different config files.')
+
   # If id column and url column(s) are not given this option cannot be run, exit. 
   if conf_a.id_column == None or conf_a.diff_columns == [None]:
     error('The first configuration file you selected is missing a unique \'id_column\' or one or more \'diff_column\'')

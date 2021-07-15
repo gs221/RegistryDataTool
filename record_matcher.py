@@ -24,6 +24,10 @@ def match_records() -> None:
     # Show that configuration files have been loaded successfully.
     info('Configuration files loaded successfully.', pre='\n')
 
+    # Check that two different configurations were selected 
+    if conf_a.config_path == conf_b.config_path:
+        error('You selected the same configuration twice (' + conf_a.config_path + '). Select two different config files.')
+
     # Check that recall weights are the same, use conf_a recall weight if not: 
     if conf_a.recall_weight != conf_b.recall_weight:
         info('Configuration files have different recall weights. The program will use the recall weight specified in the first configuration file. (' + str(conf_a.recall_weight) + ')')

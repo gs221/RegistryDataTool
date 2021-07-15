@@ -22,6 +22,7 @@ class Configuration():
                       post=str(e) + '\n\nFor additional help see yaml documentation: https://bit.ly/3wiDdT6')
 
         # Store contents of configuration file.
+        self.config_path = yml_path
         self.folder_name = self.__load('folder_name')
         self.column_count = self.__load('column_count', can_be_blank=True)
         self.pre_clean = self.__load('pre_clean')
@@ -107,5 +108,3 @@ class Configuration():
         # Ensure that diff columns is list if single column given by user
         if not isinstance(self.diff_columns, list):
             self.diff_columns = [self.diff_columns]
-
-            

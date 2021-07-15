@@ -101,6 +101,9 @@ def check_links():
     # Write new data to file 
     data.to_csv(LINKS_CHECKED, index=False)
 
+    # Info message for user
+    info('Complete! Results saved to ' + LINKS_CHECKED)
+
 
 def run_requests(links):
     """ Executes the lists of requests concurrently and returns responses (not in order). """

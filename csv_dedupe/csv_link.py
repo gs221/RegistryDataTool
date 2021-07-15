@@ -127,9 +127,9 @@ class CsvLink(csv_helpers.CsvSetup):
         write_function = csv_helpers.write_linked_results
 
         # write out our results
-        with open(self.potential_matches, 'w', encoding='utf-8') as pm, \
-                open(self.a_only, 'w', encoding='utf-8') as a_only, \
-                open(self.b_only, 'w', encoding='utf-8') as b_only:
+        with open(self.potential_matches, 'w', newline='') as pm, \
+                open(self.a_only, 'w', newline='') as a_only, \
+                open(self.b_only, 'w', newline='') as b_only:
             write_function(clustered_dupes, self.input_1, self.input_2, pm, a_only, b_only, self.inner_join)
 
 
