@@ -5,13 +5,12 @@ This file contains the functions that are used to identify duplicate rows in a s
 """
 
 import os
-import csv_dedupe
 
 import pandas as pd
 from pandas import DataFrame
-from csv_dedupe import csv_dedupe
-from settings import DATA_PATH, TEMP_PATH
-from helpers import get_delimiter, get_encoding, open_config, get_file_path, pre_clean, info
+from program_files.csv_dedupe import csv_dedupe
+from program_files.settings import DATA_PATH, TEMP_PATH
+from program_files.helpers import get_delimiter, get_encoding, open_config, get_file_path, pre_clean, info
 
 
 def detect_duplicates() -> None:

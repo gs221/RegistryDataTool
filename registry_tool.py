@@ -6,15 +6,15 @@ based on user input. Contains overall exception handling.
 """
 
 import os
-
 import colorama
-from link_checker import check_links
-from menu import SingleSelectionMenu
-from record_matcher import match_records
-from configuration_manager import DATA_PATH
-from duplicate_detector import detect_duplicates
-from helpers import cleanup_and_exit, info, error
-from difference_detector import detect_differences
+
+from program_files.link_checker import check_links
+from program_files.menu import SingleSelectionMenu
+from program_files.record_matcher import match_records
+from program_files.settings import DATA_PATH, OUTPUT_PATH
+from program_files.duplicate_detector import detect_duplicates
+from program_files.helpers import cleanup_and_exit, info, error
+from program_files.difference_detector import detect_differences
 
 
 def run_menu() -> None:
@@ -30,6 +30,11 @@ def run_menu() -> None:
     if not os.path.exists(DATA_PATH):
         info('Couldn\'t find ' + DATA_PATH + ' folder. This will now be created.', pre='\n')
         os.mkdir(DATA_PATH)
+
+    if not os.path.exists(OUTPUT_PATH):
+        info('Couldn\'t find ' + OUTPUT_PATH + ' folder. This will now be created.')
+        os.mkdir(OUTPUT_PATH)
+
 
     # Sets menu options, each item in list will become numbered menu option 
     menu_options = ['Match records between two files.',

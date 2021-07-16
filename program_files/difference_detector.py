@@ -2,8 +2,8 @@
 import pandas as pd
 from pandas import DataFrame
 
-from settings import DATA_PATH, DIFFERENCES
-from helpers import open_config, info, get_file_path, get_encoding, pre_clean, get_delimiter, error
+from program_files.settings import DATA_PATH, DIFFERENCES, OUTPUT_PATH
+from program_files.helpers import open_config, info, get_file_path, get_encoding, pre_clean, get_delimiter, error
 
 def detect_differences():
   """ Detects differences between rows with the same ID (across two files) """
@@ -96,8 +96,8 @@ def detect_differences():
     combined.drop(diff.index, inplace=True)
 
   # Save differences to csv
-  diff.to_csv(DIFFERENCES, index=False)
+  diff.to_csv(OUTPUT_PATH + DIFFERENCES, index=False)
 
   # Info message for user
-  info('Complete! Results saved to ' + DIFFERENCES)
+  info('Complete! Results saved to ' + OUTPUT_PATH + DIFFERENCES)
   

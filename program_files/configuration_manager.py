@@ -7,11 +7,11 @@ Contains class that loads and performs preliminary validation on configuration f
 import os
 import yaml
 
-from settings import DATA_PATH
+from program_files.settings import DATA_PATH
 
 class Configuration():
     def __init__(self, yml_path: str) -> None:
-        from helpers import error
+        from program_files.helpers import error
 
         # Attempt to open and load configuration file.
         with open(yml_path, 'r') as config:
@@ -50,7 +50,7 @@ class Configuration():
     def __load(self, yaml_name: str, can_be_blank=False):
         """ Ensures that options are not left blank, returns value. """
 
-        from helpers import error
+        from program_files.helpers import error
 
         try:
 
@@ -70,7 +70,7 @@ class Configuration():
     def __additional_validation(self):
         """ Performs additional validation on configuration options. Ensures that types and values are as expected. """
 
-        from helpers import error
+        from program_files.helpers import error
 
         if self.column_count is not None:
             # Column count must be an integer (whole number)

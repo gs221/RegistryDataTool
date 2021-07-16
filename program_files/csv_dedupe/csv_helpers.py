@@ -11,13 +11,12 @@ import dedupe
 import logging
 import platform
 
-from helpers import info
+from program_files.helpers import info
 from io import StringIO, open
-from settings import A_ONLY, B_ONLY, DATA_PATH, POTENTIAL_DUPLICATES, POTENTIAL_MATCHES, TRAINING_PATH
+from program_files.settings import A_ONLY, B_ONLY, DATA_PATH, POTENTIAL_DUPLICATES, POTENTIAL_MATCHES, TRAINING_PATH, OUTPUT_PATH
 
 if platform.system() != 'Windows':
     from signal import signal, SIGPIPE, SIG_DFL
-
     signal(SIGPIPE, SIG_DFL)
 
 
@@ -154,12 +153,12 @@ class CsvSetup(object):
         """ Initialises configuration information for the CsvSetup class. """
 
         # File names for record matcher 
-        self.potential_matches = POTENTIAL_MATCHES
-        self.a_only = A_ONLY
-        self.b_only = B_ONLY
+        self.potential_matches = OUTPUT_PATH + POTENTIAL_MATCHES
+        self.a_only = OUTPUT_PATH + A_ONLY
+        self.b_only = OUTPUT_PATH + B_ONLY
 
         # File name for duplicate detector
-        self.results_file = POTENTIAL_DUPLICATES
+        self.results_file = OUTPUT_PATH + POTENTIAL_DUPLICATES
 
         # Training files
         self.training_file = DATA_PATH + TRAINING_PATH + 'training.json'

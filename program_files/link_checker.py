@@ -9,13 +9,12 @@ import json
 import requests
 import pandas as pd
 import concurrent.futures
-import pyperclip as clipboard
 
 from pandas import DataFrame
 from requests.models import Response
 from json.decoder import JSONDecodeError
-from helpers import info, open_config, pre_clean, get_file_path, get_delimiter, get_encoding, error
-from settings import DATA_PATH, EMPTY, INVALID, NO_RESPONSE, REQUEST_TIMEOUT, VERIFY_CERT, WAYBACK_MACHINE, WBM_API, USE_WBM, LINKS_CHECKED
+from program_files.helpers import info, open_config, pre_clean, get_file_path, get_delimiter, get_encoding, error
+from program_files.settings import DATA_PATH, EMPTY, NO_RESPONSE, REQUEST_TIMEOUT, VERIFY_CERT, WAYBACK_MACHINE, WBM_API, USE_WBM, LINKS_CHECKED, OUTPUT_PATH
 
 # Disable insecure request warning, caused by setitng verify=False
 import urllib3
@@ -99,10 +98,10 @@ def check_links():
 
 
     # Write new data to file 
-    data.to_csv(LINKS_CHECKED, index=False)
+    data.to_csv(OUTPUT_PATH + LINKS_CHECKED, index=False)
 
     # Info message for user
-    info('Complete! Results saved to ' + LINKS_CHECKED)
+    info('Complete! Results saved to ' + OUTPUT_PATH + LINKS_CHECKED)
 
 
 def run_requests(links):

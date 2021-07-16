@@ -10,9 +10,9 @@ import logging
 
 from io import open
 from . import csv_helpers
-from helpers import error
+from program_files.helpers import error
 from dedupe.core import BlockingError
-from settings import DATA_PATH, TEMP_PATH
+from program_files.settings import DATA_PATH, TEMP_PATH
 
 class CsvLink(csv_helpers.CsvSetup):
     def __init__(self, conf_a, conf_b):

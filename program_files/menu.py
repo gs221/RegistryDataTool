@@ -31,7 +31,7 @@ class SingleSelectionMenu:
         """ Shows the menu as configured. Returns validated value entered by user. """
 
         # If there are no options for menu and attempt is made to show menu, show error. 
-        from helpers import error
+        from program_files.helpers import error
         if len(self.options) < 1: 
             error('Menu must have at least one option.')
 
