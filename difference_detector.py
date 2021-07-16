@@ -95,7 +95,9 @@ def detect_differences():
     diff = combined.loc[combined[a_column].ne(combined[b_column])]
     combined.drop(diff.index, inplace=True)
 
+  # Save differences to csv
   diff.to_csv(DIFFERENCES, index=False)
-  
 
+  # Info message for user
+  info('Complete! Results saved to ' + DIFFERENCES)
   
