@@ -6,6 +6,7 @@ Tool created for the University of St Andrews Academic Registry to aid in the im
 - Detect duplicates across two delimited files. 
 - Detect duplicate across a single delimited file. 
 - Automatically test links in a file. 
+- Detect differences across two delimited files.
 
 ## Prerequisites and Installation
 Clone repository:
@@ -18,7 +19,7 @@ If using windows you must install the following build tools:
 
 Navigate to the SCL-Tool folder and install required packages: 
 ```
-pip install -r requirements.txt
+pip install -r program_files/requirements.txt
 ```
 
 ## Licensing 
