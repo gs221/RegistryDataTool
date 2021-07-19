@@ -12,9 +12,9 @@ import platform
 
 from colorama import Fore, Back
 from detect_delimiter import detect
-from program_files.menu import SingleSelectionMenu
 from colorama.initialise import deinit
 from json.decoder import JSONDecodeError
+from program_files.menu import SingleSelectionMenu
 from program_files.configuration_manager import Configuration
 from program_files.settings import CONFIG_PATH, DATA_PATH, TEMP_PATH, TRAINING_PATH
 

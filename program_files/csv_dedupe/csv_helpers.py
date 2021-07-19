@@ -11,8 +11,8 @@ import dedupe
 import logging
 import platform
 
-from program_files.helpers import info
 from io import StringIO, open
+from program_files.helpers import info
 from program_files.settings import A_ONLY, B_ONLY, DATA_PATH, POTENTIAL_DUPLICATES, POTENTIAL_MATCHES, TRAINING_PATH, OUTPUT_PATH
 
 if platform.system() != 'Windows':

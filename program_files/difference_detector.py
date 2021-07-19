@@ -1,3 +1,9 @@
+""" 
+Difference Detector: 
+
+Detects changes across two delimited files. For example, could check if the status flags have changed 
+beween ucas and scl data. 
+"""
 
 import pandas as pd
 from pandas import DataFrame

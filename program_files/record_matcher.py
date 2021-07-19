@@ -7,9 +7,9 @@ Contains functions that match records across two delimited files.
 import os
 import pandas as pd
 
+from pandas.core.frame import DataFrame
 from program_files.csv_dedupe import csv_link
 from program_files.menu import SingleSelectionMenu
-from pandas.core.frame import DataFrame
 from program_files.settings import DATA_PATH, TEMP_PATH, SCL_COLUMNS, UCAS_COLUMNS
 from program_files.helpers import get_delimiter, get_encoding, open_config, open_config, get_file_path, pre_clean, info, todo, error, warning
 
