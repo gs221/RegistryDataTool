@@ -85,20 +85,23 @@ def detect_differences():
           error('Could not find \'' + column + '\' column. Have you entered it correctly in the configuration file?')
 
 
-  # Remove uncommon records from data_a (Data does not have a shared id in data_b) and vice versa
+  # Remove uncommon records from data_a (Data that does not have a shared id/primary key in data_b) and vice versa
   data_a_condensed = data_a[data_a[conf_a.id_column].isin(data_b[conf_b.id_column])].sort_values(conf_a.id_column)
   data_b_condensed = data_b[data_b[conf_b.id_column].isin(data_a[conf_a.id_column])].sort_values(conf_b.id_column)
 
   # When sorting by unique id, the index column is no longer sequential
-  # This removes the current index column and adds a new index colum with values 0 - number of records. 
+  # This removes the current index column and adds a new index colum with values 0 -> number of records. 
   data_a_index_reset = data_a_condensed.reset_index(drop=True)
   data_b_index_reset = data_b_condensed.reset_index(drop=True)
 
   # Combine columns from data_b to the right of data_a
   combined = pd.concat([data_a_index_reset, data_b_index_reset], axis=1)
 
+  # For every column in both datasetsto be considered for differences, 
   for a_column, b_column in zip(conf_a.diff_columns, conf_b.diff_columns):
+    # Get data where current column in data_a not equal to current column in data_b
     diff = combined.loc[combined[a_column].ne(combined[b_column])]
+    # Drop rows in the original dataset where differences have already been found. 
     combined.drop(diff.index, inplace=True)
 
   # Save differences to csv

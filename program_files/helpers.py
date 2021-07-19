@@ -177,8 +177,14 @@ def get_encoding(file_path: str) -> str:
         try:
             with open(file_path, encoding=encoding) as file:
                 file.read()
+
+                if platform.system() == 'Windows':
+                    info('Using encoding: ' + encoding + ' for ' + file_path.split('\\')[-1])
+                else:
+                    info('Using encoding: ' + encoding + ' for ' + file_path.split('/')[-1])
+                
                 return encoding
-        except UnicodeDecodeError:
+        except Exception: # Not specific to account for UnicodeDecode error and others (potentially)
             pass
 
     error('Unable to read file ' + file_path + ' using the following encodings ' + str(encodings) + 

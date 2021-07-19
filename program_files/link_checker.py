@@ -66,6 +66,9 @@ def check_links():
         if not column in data.columns:
             error('Could not find ' + column + '. Have you entered it correctly in the configuration file?')
 
+    # Tell user that link checking has started. 
+    info('Link checking has started, this may take a while. (~2min per 1k urls)')
+
     # Validate links in all url column
     for count, column in enumerate(conf.url_columns, 1):
 
@@ -119,7 +122,7 @@ def run_requests(links):
             try:
                 responses[index] = future.result()  
             except Exception as e:
-                info(str(e))
+                info('Could not get a response from ' + url)
                 responses[index] = available_on_wbm(url)
 
     return responses
