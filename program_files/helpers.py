@@ -55,6 +55,9 @@ def open_config() -> dict:
                 info("Couldn't find configurations folder. This will now be created")
                 os.mkdir(CONFIG_PATH)
 
+                info("Adding empty configuration file to configuration folder to get you started.", post='\n')
+                shutil.copyfile('./program_files/empty.conf', './configurations/empty.conf')
+
             # Gets a list of .config files in path 
             config_files = glob.glob(os.path.join(CONFIG_PATH, '*.conf'))
 
