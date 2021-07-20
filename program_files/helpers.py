@@ -50,6 +50,11 @@ def open_config() -> dict:
             # Otherwise informs the user that default config file could not be found.
             todo('Please select a configuration file from the list below.', pre='\n', post='\n')
 
+            # If the configuration folder does not exist, create it. 
+            if not os.path.exists(CONFIG_PATH):
+                info("Couldn't find configurations folder. This will now be created")
+                os.mkdir(CONFIG_PATH)
+
             # Gets a list of .config files in path 
             config_files = glob.glob(os.path.join(CONFIG_PATH, '*.conf'))
 

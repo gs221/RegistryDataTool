@@ -121,7 +121,7 @@ def run_requests(links):
             
             try:
                 responses[index] = future.result()  
-            except Exception as e:
+            except Exception:
                 info('Could not get a response from ' + url)
                 responses[index] = available_on_wbm(url)
 
