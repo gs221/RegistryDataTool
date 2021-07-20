@@ -18,8 +18,8 @@ future==0.18.2
 haversine==2.3.1
 highered==0.2.1
 Levenshtein-search==1.4.5
-numpy==1.21.0
-pandas==1.2.5
+numpy # No version as it breaks CS machines
+pandas # No version as it breaks CS machines
 persistent==4.7.0
 pycparser==2.20
 pyhacrf-datamade==0.2.5
