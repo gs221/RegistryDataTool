@@ -52,7 +52,7 @@ def open_config() -> dict:
 
             # If the configuration folder does not exist, create it. 
             if not os.path.exists(CONFIG_PATH):
-                info("Couldn't find configurations folder. This will now be created")
+                info("Couldn't find configurations folder. This will now be created.")
                 os.mkdir(CONFIG_PATH)
 
                 info("Adding empty configuration file to configuration folder to get you started.", post='\n')
