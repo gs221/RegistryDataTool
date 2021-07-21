@@ -152,7 +152,9 @@ def generate_clean_files(data_a, conf_a, data_b, conf_b, format=False) -> None:
 
             return (scl_conf, ucas_conf)
         else:
-            warning('Unable to detect ucas/scl data. Continuing as if generic files were used.', pre='\n', post='\n') 
+            warning('Unable to detect ucas and scl data. Continuing as if generic files were used.', pre='\n') 
+            warning('If you are certain you selected ucas and scl data, ensure that the subset of\n' +
+                    '          columns are up to date in settings.py', post='\n')
 
     # Generate clean files and place in directory
     # Index is set to false to prevent pandas from writing the ID's it has given to each row.
