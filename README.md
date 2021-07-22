@@ -10,6 +10,12 @@ The tool includes the following options:
 - Automatically test links in a file. 
 - Detect differences across two delimited files.
 
+## Documentation
+
+Docucumentation for the data tool can be found here:
+- [Source 1 - OneDrive](https://universityofstandrews907-my.sharepoint.com/:w:/g/personal/gs221_st-andrews_ac_uk/EYQC-RKj859Ao_rQ0yDG_okB5LFdglXZnp4erHbyUucanw?e=DbG8CD)
+- [Source 2 - Personal Server](https://os5.mycloud.com/action/share/ff5c3679-3366-4964-83e2-eff3dec61974)
+
 ## Prerequisites and Installation
 Clone repository:
 ```
