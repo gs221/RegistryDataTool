@@ -1,7 +1,7 @@
 # Registry Data Tool
 
 ## Description
-Tool created for the University of St Andrews Academic Registry to aid in the management of their data. 
+Tool created for Academic Registry to aid in the management of their data. 
 
 The tool includes the following options: 
 
@@ -26,6 +26,3 @@ pip install -r program_files/requirements.txt
 
 ## Licensing 
 [Csvdedupe](https://github.com/dedupeio/csvdedupe#copyright-and-attribution) - Copyright © 2016 DataMade. Released under MIT License.
-
-## Contact 
-- Gregor (University Email): gs221
