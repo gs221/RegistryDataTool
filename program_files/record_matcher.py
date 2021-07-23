@@ -162,4 +162,3 @@ def generate_clean_files(data_a, conf_a, data_b, conf_b, format=False) -> None:
     data_b.to_csv(DATA_PATH + TEMP_PATH + 'temp_b.csv', index=False)
 
     return (conf_a, conf_b)
-

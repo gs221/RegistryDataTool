@@ -68,4 +68,3 @@ class SingleSelectionMenu:
             # Catches cases where user enters invalid integer or string, which cannot be parsed to a number.
             except ValueError:
                 pass
-
